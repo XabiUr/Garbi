@@ -6,16 +6,21 @@
 - Encender → lanza `python supervisor.py <args>` con `cwd` en la carpeta del supervisor (lee config.json, zona.json...).
 - Apagar   → SIGTERM: el supervisor lo atiende como la tecla Q (vuelve a reposo y cierra). Si a los `espera_apagado`
              segundos no ha salido, SIGINT (cierra sin volver a reposo) y, si tampoco, SIGKILL.
-- Emergencia (seta / botón rojo) → SIGUSR1 = PARADA (como ESPACIO). Rearmar → SIGUSR2 = continuar (como C).
-- El resto de comandos (limpiezas, parar) todavía no existen en el supervisor: se anotan como no disponibles.
+- Limpiar tabla / Limpiar tapete / Parar / Emergencia / Rearmar → órdenes por UDP a 127.0.0.1:8765
+  ("tabla" = tecla B, "tapete" = tecla T, "parar" = interrumpe el barrido, "parada" = ESPACIO, "continuar" = C).
+  La emergencia también va por señal (SIGUSR1) por si el canal UDP fallara.
+- Estado: el supervisor escribe estado_supervisor.json varias veces por segundo; la app lo traduce a sus estados
+  (REPOSO, ACERCAMIENTO, EN_BROCA, LIMPIEZA_TABLA, LIMPIEZA_TAPETE, EMERGENCIA).
 
 Las cámaras las tiene abiertas el supervisor (con su propia ventana de OpenCV), así que la app no enseña vídeo.
 """
 from __future__ import annotations
 
 import logging
+import json
 import os
 import shlex
+import socket
 import signal
 import subprocess
 import sys
@@ -31,6 +36,15 @@ log = logging.getLogger(__name__)
 # Garbi/Robotalde_.../garbi/producto/app/supervisor_externo.py → Garbi/plana
 CARPETA_POR_DEFECTO = Path(__file__).resolve().parents[4] / "plana"
 ARGS_POR_DEFECTO = "--real --cerebro zonas"
+PUERTO_COMANDOS = 8765
+
+# estado del supervisor → estado de la app
+ESTADOS = {"REPOSO": Estado.REPOSO, "APROXIMANDO": Estado.ACERCAMIENTO, "EN_OBJETIVO": Estado.EN_BROCA,
+           "FIJO": Estado.EN_BROCA, "LIMPIEZA_LOCAL": Estado.EN_BROCA, "PARADA": Estado.EMERGENCIA}
+DETALLES = {"REPOSO": "En reposo: esperando al taladro", "APROXIMANDO": "Me acerco a la broca",
+            "EN_OBJETIVO": "En la broca", "FIJO": "En la broca", "LIMPIEZA_LOCAL": "Limpiando junto a la broca",
+            "VOLVIENDO": "Vuelvo a reposo", "PARADA": "PARADA (rearmar para continuar)",
+            "BARRIDO_IDA": "Voy a barrer", "BARRIENDO": "Barriendo"}
 
 
 class OrquestadorSupervisor:
@@ -48,6 +62,8 @@ class OrquestadorSupervisor:
         self._apagando = False
         self._parada = False
         self._eventos: deque[str] = deque(maxlen=60)
+        self._udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._ultimo_aviso = ""
         self._anotar("App lista: pulsa Encender para arrancar el supervisor")
 
     # --- interfaz del puente ------------------------------------------------------------------------------------------
@@ -61,15 +77,23 @@ class OrquestadorSupervisor:
             elif comando is Comando.APAGAR:
                 self._apagar()
             elif comando is Comando.EMERGENCIA:
-                if self._enviar(signal.SIGUSR1):
+                if self._orden("parada"):
+                    self._enviar(signal.SIGUSR1)   # por si el UDP fallara (el supervisor ignora la repetición)
                     self._parada = True
                     self._anotar("¡EMERGENCIA! PARADA en el supervisor")
             elif comando is Comando.REARMAR:
-                if self._enviar(signal.SIGUSR2):
+                if self._orden("continuar"):
                     self._parada = False
                     self._anotar("Rearmado: el supervisor vuelve a reposo")
-            else:
-                self._anotar(f"«{comando.value}» aún no está disponible con el supervisor")
+            elif comando is Comando.LIMPIAR_TABLA:
+                if self._orden("tabla"):
+                    self._anotar("Pedido: limpiar la tabla (B)")
+            elif comando is Comando.LIMPIAR_TAPETE:
+                if self._orden("tapete"):
+                    self._anotar("Pedido: limpiar el tapete (T)")
+            elif comando is Comando.PARAR:
+                if self._orden("parar"):
+                    self._anotar("Pedido: parar el barrido")
 
     def estado_app(self) -> EstadoApp:
         with self._cerrojo:
@@ -79,10 +103,8 @@ class OrquestadorSupervisor:
                 estado, detalle = Estado.APAGADO, "Supervisor cerrado"
             elif self._apagando:
                 estado, detalle = Estado.REPOSO, "Apagando: vuelve a reposo y se cierra"
-            elif self._parada:
-                estado, detalle = Estado.EMERGENCIA, "PARADA en el supervisor (rearmar para continuar)"
             else:
-                estado, detalle = Estado.REPOSO, f"Supervisor en marcha (PID {self._proceso.pid})"
+                estado, detalle = self._estado_supervisor()
             return EstadoApp(
                 estado=estado, detalle=detalle, aspiradora=False, politica=self.politica,
                 tecnologias={
@@ -91,6 +113,30 @@ class OrquestadorSupervisor:
                     "aspiradora": "manual",
                 },
                 eventos=list(self._eventos))
+
+    def _estado_supervisor(self) -> tuple:
+        """Lee estado_supervisor.json (lo escribe el supervisor) y lo traduce a los estados de la app."""
+        try:
+            d = json.load(open(self.carpeta / "estado_supervisor.json"))
+        except (FileNotFoundError, json.JSONDecodeError):
+            d = None
+        if not d or d.get("pid") != self._proceso.pid or time.time() - d.get("t", 0) > 3.0:
+            return Estado.REPOSO, "Arrancando el supervisor..."
+        e = d["estado"]
+        aviso = d.get("aviso") or ""
+        if aviso and aviso != self._ultimo_aviso:
+            self._ultimo_aviso = aviso
+            self._eventos.appendleft(aviso)
+        if d.get("barrido") and e in ("BARRIDO_IDA", "BARRIENDO", "VOLVIENDO"):
+            estado = Estado.LIMPIEZA_TAPETE if d["barrido"] == "tapete" else Estado.LIMPIEZA_TABLA
+            que = "el tapete" if d["barrido"] == "tapete" else "la tabla"
+            detalle = f"Vuelvo a reposo tras barrer {que}" if e == "VOLVIENDO" else f"{DETALLES.get(e, e)} {que}"
+        else:
+            estado, detalle = ESTADOS.get(e, Estado.REPOSO), DETALLES.get(e, e)
+        self._parada = e == "PARADA"
+        if not d.get("barrido_listo", True):
+            detalle += " · barrido sin calibrar"
+        return estado, detalle
 
     def imagenes_anotadas(self) -> dict:
         return {}   # las cámaras las usa el supervisor
@@ -157,6 +203,18 @@ class OrquestadorSupervisor:
                     os.kill(proceso.pid, senal)
                 except ProcessLookupError:
                     return
+
+    def _orden(self, texto: str) -> bool:
+        """Manda una orden al supervisor por UDP (127.0.0.1)."""
+        if not self._vivo():
+            self._anotar("El supervisor no está en marcha: pulsa Encender")
+            return False
+        try:
+            self._udp.sendto(texto.encode(), ("127.0.0.1", PUERTO_COMANDOS))
+            return True
+        except OSError as e:
+            self._anotar(f"No puedo mandar «{texto}» al supervisor ({e})")
+            return False
 
     def _enviar(self, senal: signal.Signals) -> bool:
         if not self._vivo():

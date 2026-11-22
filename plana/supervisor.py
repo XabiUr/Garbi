@@ -43,6 +43,7 @@ Uso:
 """
 
 import argparse
+import os
 import json
 import signal
 import cv2
@@ -159,6 +160,20 @@ class Supervisor:
         #   SIGTERM -> salir como con Q (vuelve a reposo y cierra)
         #   SIGUSR1 -> PARADA (como ESPACIO) · SIGUSR2 -> continuar (como C)
         self.salida_pedida = False
+        # Canal con la web (garbi.producto.app --supervisor): órdenes por UDP en 127.0.0.1 y estado en un JSON
+        self.puerto_comandos = config["supervisor"].get("puerto_comandos", 8765)
+        self.sock_comandos = None
+        try:
+            import socket
+            self.sock_comandos = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.sock_comandos.bind(("127.0.0.1", self.puerto_comandos))
+            self.sock_comandos.setblocking(False)
+            print(f"[Supervisor] Escuchando órdenes de la web en 127.0.0.1:{self.puerto_comandos}")
+        except OSError as e:
+            print(f"⚠️  [Supervisor] Sin canal de órdenes de la web ({e})")
+            self.sock_comandos = None
+        self.tipo_barrido = None   # "tabla" | "tapete" mientras dura un barrido
+        self.ultimo_aviso = ""
         self.parada_pedida = False
         self.continuar_pedido = False
 
@@ -290,6 +305,7 @@ class Supervisor:
                 self.seguridad.activar_parada()
             elif nuevo_estado == Estado.REPOSO:
                 self.en_barrido = False
+                self.tipo_barrido = None
                 self.tiempo_sin_morado = 0.0
                 # Resetear UV congelado y trayectoria
                 self.uv_congelado = None
@@ -333,6 +349,8 @@ class Supervisor:
             # Sin taladro: ¿barrer la tabla?
             if self.taladro_visible(percepcion):
                 self.tiempo_sin_taladro = 0.0
+                if self.barrido_pedido or self.barrido_tapete_pedido:
+                    self.avisar("No barro: hay un taladro a la vista")
                 self.barrido_pedido = False   # con el taladro en escena no se barre
                 self.barrido_tapete_pedido = False
             else:
@@ -660,9 +678,39 @@ class Supervisor:
         from madera import distancia_esquinas
         return distancia_esquinas(m["esquinas_px"], self.tabla_barrida) > 3 * self.detector_madera.p["coincide_px"]
 
+    # --- canal con la web ------------------------------------------------------------------------------------------
+    def avisar(self, texto: str):
+        print(f"[Supervisor] {texto}")
+        self.ultimo_aviso = f"{time.strftime('%H:%M:%S')} · {texto}"
+
+    def leer_orden_web(self):
+        """Última orden recibida por UDP (texto) o None. No bloquea."""
+        orden = None
+        while self.sock_comandos is not None:
+            try:
+                datos, _ = self.sock_comandos.recvfrom(256)
+                orden = datos.decode("utf-8", "ignore").strip().lower()
+            except (BlockingIOError, OSError):
+                break
+        return orden
+
+    def escribir_estado_web(self):
+        """estado_supervisor.json para la web (escritura atómica)."""
+        try:
+            m = self.madera
+            datos = {"t": time.time(), "pid": os.getpid(), "estado": self.estado.value,
+                     "barrido": self.tipo_barrido, "madera": bool(m and m["hay_madera"]),
+                     "cerebro": self.cerebros_nombres[self.cerebro_actual_idx], "aviso": self.ultimo_aviso,
+                     "barrido_listo": bool(self.mapeo_ik.ok)}
+            with open("estado_supervisor.json.tmp", "w") as f:
+                json.dump(datos, f)
+            os.replace("estado_supervisor.json.tmp", "estado_supervisor.json")
+        except Exception:
+            pass
+
     def iniciar_barrido(self, tapete: bool = False):
         if not self.mapeo_ik.ok:
-            print("[Supervisor] Barrido: falta la calibración (calibrar_mesa.py + grabar_posturas_mesa.py)")
+            self.avisar("Barrido: falta la calibración (calibrar_mesa.py + grabar_posturas_mesa.py)")
             return
         k = vel = dur = alt = None
         if tapete:
@@ -677,12 +725,12 @@ class Supervisor:
         else:
             recorrido = self.recorrido_actual_px()
             if recorrido is None:
-                print("[Supervisor] Barrido: no veo la tabla")
+                self.avisar("Barrido: no veo la tabla")
                 return
         obs_actual = self.robot.get_observation()
         ida, barr, err, posturas = self.barrido.planificar_barrido(obs_actual, recorrido, self.config, self.mapeo_ik, k, vel, dur, alt)
         if ida is None:
-            print("❌ [Supervisor] No barro: la tabla está fuera de lo calibrado o el brazo no llega")
+            self.avisar("No barro: la tabla está fuera de lo calibrado o el brazo no llega")
             return
         # límites del barrido: los del taladro ampliados con las posturas planificadas (+2 de margen)
         self.limites_barrido = {}
@@ -693,6 +741,8 @@ class Supervisor:
         self.trayectoria_actual, self.traj_barrido = ida, barr
         self.tiempo_trayectoria = 0.0
         self.en_barrido = True
+        self.tipo_barrido = "tapete" if tapete else "tabla"
+        self.avisar(f"Barriendo {'el tapete' if tapete else 'la tabla'}")
         print(f"[Supervisor] Barrido {'del TAPETE' if tapete else 'de la tabla'} planificado: ida {ida.duracion:.1f}s + barrido {barr.duracion:.1f}s "
               f"({len(recorrido)} puntos)")
         self.transicion_estado(Estado.BARRIDO_IDA)
@@ -842,6 +892,19 @@ class Supervisor:
                 # 9. Manejar teclas
                 tecla = cv2.waitKey(1) & 0xFF
 
+                # Órdenes de la web por UDP: se traducen a la tecla equivalente
+                orden = self.leer_orden_web()
+                if orden:
+                    print(f"[Supervisor] Orden de la web: {orden}")
+                    if orden == "parar":
+                        if self.estado in (Estado.BARRIDO_IDA, Estado.BARRIENDO):
+                            self.abortar_barrido("parado desde la web")
+                    else:
+                        tecla = {"tabla": ord('b'), "tapete": ord('t'), "parada": ord(' '), "continuar": ord('c'),
+                                 "salir": ord('q')}.get(orden, tecla)
+                        if orden == "parada" and self.estado == Estado.PARADA:
+                            tecla = 0xFF
+
                 # Peticiones de la web (por señal): se traducen a la tecla equivalente
                 if self.salida_pedida:
                     print("\n[Supervisor] Apagado pedido desde la web")
@@ -894,6 +957,9 @@ class Supervisor:
                                 self.robot.send_action(self.postura_reposo)
                             time.sleep(1.0 / 30)
                     break
+
+                if self.ciclo % 8 == 0:
+                    self.escribir_estado_web()
 
                 # 10. Control de frecuencia
                 self.ciclo += 1
