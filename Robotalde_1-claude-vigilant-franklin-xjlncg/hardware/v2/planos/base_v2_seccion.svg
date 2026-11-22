@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="285.00mm" height="200.00mm" viewBox="0 0 285.000 200.000">
+<rect x="0" y="0" width="285.000" height="200.000" fill="#ffffff"/>
+<polygon points="27.200,181.800 218.100,181.800 218.100,161.100 213.500,161.100 211.200,163.400 211.200,168.000 137.600,168.000 134.150,171.450 134.150,172.600 118.050,172.600 118.050,171.450 114.600,168.000 27.200,168.000" fill="#eeeeee" stroke="#000000" stroke-width="0.350"/>
+<polygon points="114.140,181.800 138.060,181.800 138.060,174.440 114.140,174.440" fill="#ffffff" stroke="#757575" stroke-width="0.200"/>
+<polygon points="114.600,181.340 137.600,181.340 137.600,174.440 114.600,174.440" fill="#9e9e9e"/>
+<polygon points="119.200,172.600 133.000,172.600 133.000,132.350 170.950,132.350 174.400,128.900 174.400,124.300 170.950,120.850 133.000,120.850 133.000,80.600 119.200,80.600" fill="#e3f2fd" stroke="#1565c0" stroke-width="0.300" stroke-dasharray="1.50 0.80"/>
+<polygon points="121.155,172.600 131.045,172.600 131.045,162.710 121.155,162.710" fill="#ffffff" stroke="#757575" stroke-width="0.200"/>
+<polygon points="121.500,171.910 130.700,171.910 130.700,162.710 121.500,162.710" fill="#9e9e9e"/>
+<circle cx="119.200" cy="168.000" r="2.070" fill="#c62828"/>
+<polygon points="185.440,181.800 209.360,181.800 209.360,171.450 185.440,171.450" fill="#ffffff" stroke="#757575" stroke-width="0.200"/>
+<polygon points="185.900,178.350 208.900,178.350 208.900,171.450 185.900,171.450" fill="#9e9e9e"/>
+<polygon points="190.500,168.000 204.300,168.000 204.300,127.750 242.250,127.750 245.700,124.300 245.700,119.700 242.250,116.250 204.300,116.250 204.300,76.000 190.500,76.000" fill="#e3f2fd" stroke="#1565c0" stroke-width="0.300" stroke-dasharray="1.50 0.80"/>
+<polygon points="192.455,168.000 202.345,168.000 202.345,158.110 192.455,158.110" fill="#ffffff" stroke="#757575" stroke-width="0.200"/>
+<polygon points="192.800,167.310 202.000,167.310 202.000,158.110 192.800,158.110" fill="#9e9e9e"/>
+<circle cx="190.500" cy="168.000" r="2.070" fill="#c62828"/>
+<polyline points="45.321,94.121 114.321,163.121" fill="none" stroke="#c62828" stroke-width="0.800"/>
+<circle cx="114.321" cy="163.121" r="1.610" fill="#2e7d32"/>
+<text x="45.321" y="89.521" font-size="2.400" fill="#c62828" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">antorcha a 45° (T)</text>
+<polyline points="153.421,130.921 185.621,163.121" fill="none" stroke="#c62828" stroke-width="0.800"/>
+<text x="151.121" y="126.321" font-size="2.400" fill="#c62828" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">esquina</text>
+<text x="126.100" y="72.550" font-size="2.400" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">T (canto en Z = −2)</text>
+<text x="197.400" y="67.950" font-size="2.400" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">esquina (canto en Z = 0)</text>
+<polyline points="118.050,171.800 118.050,158.400" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="134.150,171.800 134.150,158.400" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="118.050,159.600 134.150,159.600" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="118.050,159.600 119.650,159.040 119.650,160.160" fill="#1565c0"/>
+<polygon points="134.150,159.600 132.550,160.160 132.550,159.040" fill="#1565c0"/>
+<text x="126.100" y="158.500" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">7</text>
+<polyline points="139.100,168.000 134.700,168.000" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="139.100,172.600 134.700,172.600" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="135.900,168.000 135.900,172.600" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="135.900,168.000 136.460,169.600 135.340,169.600" fill="#1565c0"/>
+<polygon points="135.900,172.600 135.340,171.000 136.460,171.000" fill="#1565c0"/>
+<text x="137.590" y="170.300" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 137.590 170.300)">2</text>
+<polyline points="26.400,168.000 21.000,168.000" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="26.400,181.800 21.000,181.800" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="22.200,168.000 22.200,181.800" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="22.200,168.000 22.760,169.600 21.640,169.600" fill="#1565c0"/>
+<polygon points="22.200,181.800 21.640,180.200 22.760,180.200" fill="#1565c0"/>
+<text x="23.890" y="174.900" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 23.890 174.900)">6</text>
+<polyline points="218.900,181.800 224.300,181.800" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="218.900,161.100 224.300,161.100" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="223.100,181.800 223.100,161.100" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="223.100,181.800 222.540,180.200 223.660,180.200" fill="#1565c0"/>
+<polygon points="223.100,161.100 223.660,162.700 222.540,162.700" fill="#1565c0"/>
+<text x="226.610" y="171.450" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 226.610 171.450)">9</text>
+<polyline points="211.200,160.300 211.200,155.900" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="218.100,160.300 218.100,155.900" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="211.200,157.100 218.100,157.100" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="211.200,157.100 212.800,156.540 212.800,157.660" fill="#1565c0"/>
+<polygon points="218.100,157.100 216.500,157.660 216.500,156.540" fill="#1565c0"/>
+<text x="214.650" y="156.000" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">3</text>
+<polyline points="138.860,181.800 142.260,181.800" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="138.860,174.440 142.260,174.440" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="141.060,181.800 141.060,174.440" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="141.060,181.800 140.500,180.200 141.620,180.200" fill="#1565c0"/>
+<polygon points="141.060,174.440 141.620,176.040 140.500,176.040" fill="#1565c0"/>
+<text x="144.030" y="178.120" font-size="2.200" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 144.030 178.120)">3,2</text>
+<polyline points="210.160,181.800 213.560,181.800" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="210.160,171.450 213.560,171.450" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="212.360,181.800 212.360,171.450" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="212.360,181.800 211.800,180.200 212.920,180.200" fill="#1565c0"/>
+<polygon points="212.360,171.450 212.920,173.050 211.800,173.050" fill="#1565c0"/>
+<text x="215.330" y="176.625" font-size="2.200" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 215.330 176.625)">4,5</text>
+<polyline points="175.200,132.350 179.600,132.350" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="175.200,120.850 179.600,120.850" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="178.400,132.350 178.400,120.850" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="178.400,132.350 177.840,130.750 178.960,130.750" fill="#1565c0"/>
+<polygon points="178.400,120.850 178.960,122.450 177.840,122.450" fill="#1565c0"/>
+<text x="181.910" y="126.600" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 181.910 126.600)">5</text>
+<polyline points="133.000,112.000 133.000,108.600" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="174.400,112.000 174.400,108.600" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="133.000,109.800 174.400,109.800" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="133.000,109.800 134.600,109.240 134.600,110.360" fill="#1565c0"/>
+<polygon points="174.400,109.800 172.800,110.360 172.800,109.240" fill="#1565c0"/>
+<text x="153.700" y="108.700" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">18</text>
+<text x="8.000" y="10.000" font-size="5.000" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-weight="bold">BASE-V2 · sección YZ por X = 0 (por los imanes), con la chapa móvil en T y en esquina</text>
+<text x="8.000" y="16.000" font-size="3.000" fill="#333333" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">+Y a la derecha, Z arriba; Z = 0 en la cara superior de la base. Punto rojo: cordón. Gris oscuro: imanes metidos hasta el fondo de su agujero.</text>
+<text x="8.000" y="20.200" font-size="3.000" fill="#333333" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Piel bajo la chapa: T 0,8 mm (suelo de la ranura), esquina 1,5 mm. El tope es macizo de Z = −6 a +3 (apoya en la mesa).</text>
+</svg>

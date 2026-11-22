@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#0b3767">
+  <title>LeWelder · Arcade</title>
+  <link rel="icon" href="../icono.svg" type="image/svg+xml">
+  <link rel="preload" href="fuentes/SairaStencilOne.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fuentes/ShareTechMono.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fuentes/ChakraPetch-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fuentes/CaveatBrush.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="estilo.css">
+  <script type="importmap">
+    { "imports": { "three": "../vendor/three-0.170.0.module.min.js" } }
+  </script>
+</head>
+<body>
+<div class="lamina" id="lamina" data-pantalla="atraccion">
+  <!-- Lámina: el 3D va al fondo, sobre la rejilla del plano; todo lo demás son capas encima. -->
+  <div class="escenario" id="escenario">
+    <canvas id="lienzo" aria-hidden="true"></canvas>
+    <svg class="guias" id="guias" aria-hidden="true"></svg>
+    <div class="etiquetas3d" id="etiquetas3d" aria-hidden="true"></div>
+  </div>
+
+  <!-- Marco de la lámina con las referencias de zona (A-H, 1-6), como un plano de verdad. -->
+  <div class="marco" aria-hidden="true">
+    <div class="zonas zonas-h"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span></div>
+    <div class="zonas zonas-v"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+  </div>
+
+  <header class="rotulo">
+    <div class="rotulo-marca">LEWELDER</div>
+    <div class="rotulo-sub">Máquina de soldar · plano LW-02</div>
+  </header>
+
+  <div class="controles">
+    <span class="conexion" id="conexion" hidden>SIN CONEXIÓN</span>
+    <button class="boton-icono" id="b-saltar" hidden aria-label="Saltar a la siguiente pantalla">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l8 7-8 7M13 5l8 7-8 7"/></svg>
+      <span>SALTAR</span>
+    </button>
+    <button class="boton-icono" id="b-sonido" aria-pressed="false" aria-label="Silenciar">
+      <svg class="ico-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+      <svg class="ico-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+    </button>
+  </div>
+
+  <!-- ============================== PANTALLAS ============================== -->
+  <main class="pantallas">
+
+    <!-- 1 · Atracción -->
+    <section class="pantalla" data-p="atraccion" aria-label="Pantalla de atracción">
+      <div class="atr-titulo">
+        <div class="atr-tag">Soldadura arcade · <b>humano vs. robot</b></div>
+        <h1 class="atr-nombre">LE<span>WELDER</span></h1>
+      </div>
+      <button class="atr-jugar" id="b-jugar">
+        <span class="atr-jugar-texto">PULSA PARA JUGAR</span>
+        <span class="atr-jugar-sub">pide una junta · el robot la monta · suéldala mejor que él</span>
+      </button>
+      <div class="bom bom-atr" id="bom-atr"></div>
+    </section>
+
+    <!-- 2 · Pedir -->
+    <section class="pantalla" data-p="pedir" aria-label="Pide la junta">
+      <h2 class="titulo-p">¿Qué junta te <em>monto</em>?</h2>
+      <p class="sub-p">Pídemela en voz alta o toca un ejemplo</p>
+      <button class="micro" id="b-micro" aria-label="Hablar">
+        <span class="micro-anillo"></span><span class="micro-anillo a2"></span>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="17" y="5" width="14" height="24" rx="7"/><path d="M10 22a14 14 0 0 0 28 0M24 36v7M16 43h16"/></svg>
+        <span class="micro-cota">Ø 220</span>
+      </button>
+      <div class="micro-estado" id="micro-estado">TOCA Y HABLA</div>
+      <div class="ejemplos">
+        <button class="ejemplo" data-voz="¡Móntame una T!">
+          <svg viewBox="0 0 64 48" aria-hidden="true"><path d="M4 40h56M29 40V6h6v34"/><path class="cordon-ico" d="M29 40l-6 0 6-6z"/></svg>
+          <span>«¡Móntame una <b>T</b>!»</span>
+        </button>
+        <button class="ejemplo" data-voz="¡Móntame una esquina!">
+          <svg viewBox="0 0 64 48" aria-hidden="true"><path d="M4 40h56M54 40V6h6v34"/><path class="cordon-ico" d="M54 40l-6 0 6-6z"/></svg>
+          <span>«¡Móntame una <b>esquina</b>!»</span>
+        </button>
+      </div>
+
+      <div class="confirmar" id="confirmar" hidden role="dialog" aria-labelledby="conf-pregunta">
+        <div class="conf-hoja">
+          <div class="conf-etq">He oído</div>
+          <div class="conf-oido" id="conf-oido">«…»</div>
+          <div class="conf-orden"><span class="conf-etq">Orden</span> <code id="conf-orden">…</code></div>
+          <div class="conf-pregunta" id="conf-pregunta">¿…?</div>
+          <div class="conf-botones">
+            <button class="boton boton-si" id="b-si">SÍ, ¡MÓNTALA!</button>
+            <button class="boton boton-no" id="b-no">NO, REPITE</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · Montaje -->
+    <section class="pantalla" data-p="montaje" aria-label="El robot monta la junta">
+      <div class="panel panel-izq">
+        <div class="panel-etq">Secuencia de montaje</div>
+        <ol class="fases" id="fases">
+          <li data-f="buscando"><span class="f-n">01</span>Busca la chapa</li>
+          <li data-f="cogiendo"><span class="f-n">02</span>La coge por la aleta</li>
+          <li data-f="girando"><span class="f-n">03</span>La gira 90°</li>
+          <li data-f="encajando"><span class="f-n">04</span>Encaja con imanes</li>
+        </ol>
+        <div class="cota-barra" id="montaje-barra"><div class="cota-relleno"></div><span class="cota-pct">0 %</span></div>
+        <button class="boton boton-sec" id="b-montoyo">LA MONTO YO</button>
+      </div>
+      <figure class="detalle" id="detalle" hidden>
+        <img id="detalle-img" alt="Lo que ve la cámara del robot">
+        <figcaption>DETALLE A · cámara del robot</figcaption>
+      </figure>
+      <div class="titulo-esquina"><span class="te-n">01</span><span id="montaje-titulo">MONTANDO…</span></div>
+    </section>
+
+    <!-- 4 · Reconocer -->
+    <section class="pantalla" data-p="reconocer" aria-label="La junta reconocida">
+      <div class="simbolo" id="simbolo">
+        <svg class="iso2553" viewBox="0 0 360 120" aria-hidden="true">
+          <path class="ref" d="M20 70H330"/>
+          <path class="ident" d="M20 80H330"/>
+          <path class="tri" d="M150 70V42l28 28"/>
+          <path class="cola" d="M330 70l18-18M330 70l18 18"/>
+          <text class="garganta" x="122" y="62">a4</text>
+          <text class="pos" x="352" y="74">PB</text>
+        </svg>
+      </div>
+      <div class="sello-junta" id="sello-junta">
+        <div class="sj-etq">Junta reconocida · <span id="sj-conf">97 %</span></div>
+        <div class="sj-nombre" id="sj-nombre">UNIÓN EN ESQUINA</div>
+        <div class="sj-pos"><span id="sj-pos">PB</span> · <span id="sj-pos-txt">horizontal en ángulo</span></div>
+      </div>
+      <dl class="ficha" id="ficha">
+        <div><dt>Para qué</dt><dd id="ficha-para">…</dd></div>
+        <div><dt>Dónde</dt><dd id="ficha-donde">…</dd></div>
+        <div><dt>Ángulo</dt><dd id="ficha-angulo">…</dd></div>
+      </dl>
+      <div class="alcance" id="alcance" hidden>
+        <svg viewBox="0 0 120 120" aria-hidden="true"><path d="M95 60a35 35 0 1 1-12-26"/><path d="M84 18l-1 17 16 1"/></svg>
+        <div class="alcance-texto" id="alcance-texto">GÍRALA 90° HACIA MÍ</div>
+      </div>
+      <div class="alcance-ok" id="alcance-ok" hidden>✓ Al alcance del robot</div>
+    </section>
+
+    <!-- 5 · Demostración -->
+    <section class="pantalla" data-p="demostracion" aria-label="El robot demuestra">
+      <div class="titulo-esquina"><span class="te-n">02</span>EL ROBOT TE ENSEÑA</div>
+      <div class="demo-datos">
+        <div class="dato"><span class="dato-etq">Velocidad</span><span class="dato-v" id="demo-vel">5,0</span><span class="dato-u">mm/s</span></div>
+        <div class="dato"><span class="dato-etq">Ángulo</span><span class="dato-v" id="demo-ang">45</span><span class="dato-u">°</span></div>
+        <div class="dato-nota">Su pasada queda como <b>fantasma</b>: es tu rival.</div>
+      </div>
+      <div class="cota-barra cota-ancha" id="demo-barra"><div class="cota-relleno"></div><span class="cota-pct">0 mm</span></div>
+    </section>
+
+    <!-- 6 · Cuenta atrás -->
+    <section class="pantalla" data-p="cuenta_atras" aria-label="Cuenta atrás">
+      <div class="cuenta" id="cuenta" aria-live="assertive"></div>
+    </section>
+
+    <!-- 7 · Ronda (HUD) -->
+    <section class="pantalla" data-p="ronda" aria-label="Ronda de soldadura">
+      <div class="hud-puntos">
+        <div class="hud-etq">Puntos</div>
+        <div class="hud-total" id="hud-total">0</div>
+        <div class="hud-combo">
+          <span class="combo-n" id="hud-combo">COMBO 0</span>
+          <span class="multi" id="hud-multi">×1</span>
+        </div>
+      </div>
+      <div class="hud-carrera" id="hud-carrera">
+        <div class="hud-etq">Va ganando</div>
+        <div class="carrera-quien" id="carrera-quien">—</div>
+        <div class="carrera-dif" id="carrera-dif">salís a la vez</div>
+      </div>
+      <div class="aviso-apoyo" id="aviso-apoyo" hidden>¡APOYA LA ANTORCHA!</div>
+      <div class="tira" id="tira-ronda"></div>
+    </section>
+
+    <!-- 8 · Resultado -->
+    <section class="pantalla" data-p="resultado" aria-label="Resultado">
+      <div class="res-izq">
+        <div class="hud-etq">Puntuación final</div>
+        <div class="res-total" id="res-total">0</div>
+        <div class="res-nota">Nota de oficio <b id="res-nota">–</b><span>/10</span></div>
+        <table class="tolerancias" id="res-metricas">
+          <thead><tr><th>Métrica</th><th>Medido</th><th>Tolerancia</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="res-der">
+        <div class="res-veredicto" id="res-veredicto"></div>
+        <div class="insignia" id="insignia" hidden></div>
+      </div>
+      <div class="tira tira-res" id="tira-res"></div>
+    </section>
+
+    <!-- 9 · Iniciales -->
+    <section class="pantalla" data-p="iniciales" aria-label="Escribe tus iniciales">
+      <h2 class="titulo-p">Firma el <em>plano</em></h2>
+      <p class="sub-p">Tus iniciales para el ranking · <b id="ini-puntos">0</b> puntos</p>
+      <div class="letras" id="letras">
+        <div class="letra" data-i="0"><button class="flecha arriba" aria-label="Letra anterior">▲</button><output>A</output><button class="flecha abajo" aria-label="Letra siguiente">▼</button></div>
+        <div class="letra" data-i="1"><button class="flecha arriba" aria-label="Letra anterior">▲</button><output>A</output><button class="flecha abajo" aria-label="Letra siguiente">▼</button></div>
+        <div class="letra" data-i="2"><button class="flecha arriba" aria-label="Letra anterior">▲</button><output>A</output><button class="flecha abajo" aria-label="Letra siguiente">▼</button></div>
+      </div>
+      <button class="boton boton-si boton-firmar" id="b-firmar">FIRMAR ✓</button>
+    </section>
+
+    <!-- 10 · Ranking -->
+    <section class="pantalla" data-p="ranking" aria-label="Ranking del día">
+      <div class="bom bom-grande" id="bom-ranking"></div>
+      <button class="boton boton-si boton-otra" id="b-otra">JUGAR OTRA VEZ</button>
+    </section>
+
+    <!-- 11 · Plan B -->
+    <section class="pantalla" data-p="plan_b" aria-label="Monta tú la junta">
+      <div class="titulo-esquina titulo-rojo"><span class="te-n">B</span>PLAN B · MÓNTALA TÚ</div>
+      <ol class="pasos" id="pasos-b">
+        <li><span class="f-n">01</span><span>Coge la chapa suelta por la <b>aleta</b>.</span></li>
+        <li><span class="f-n">02</span><span>Ponla de pie <b id="b-donde">en el canto de la base</b>, con la aleta hacia fuera.</span></li>
+        <li><span class="f-n">03</span><span>Suéltala cerca: <b>los imanes la centran</b>.</span></li>
+      </ol>
+      <div class="pasos-pie">Cuando la veamos montada, seguimos solos.</div>
+    </section>
+  </main>
+
+  <!-- El personaje: el robot habla en un bocadillo (y en voz alta). -->
+  <div class="personaje" id="personaje" data-emocion="chulo" hidden>
+    <svg class="cara" viewBox="0 0 80 80" aria-hidden="true">
+      <rect class="c-cabeza" x="10" y="16" width="60" height="50" rx="4"/>
+      <path class="c-antena" d="M40 16V6M36 6h8"/>
+      <g class="ojos"></g>
+      <path class="c-boca"/>
+      <path class="c-cuello" d="M30 66v8h20v-8"/>
+    </svg>
+    <div class="bocadillo">
+      <div class="b-nombre" id="p-nombre">CHISPAS · SO-101</div>
+      <div class="b-frase" id="p-frase" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- Cajetín del plano: es interfaz (quién juega, qué junta, en qué hoja estamos). -->
+  <aside class="cajetin" aria-label="Cajetín">
+    <div class="cj cj-proy"><span>Proyecto</span><b>LeWelder</b></div>
+    <div class="cj"><span>Equipo</span><b>Robotalde</b></div>
+    <div class="cj"><span>Robot soldador</span><b id="cj-robot">CHISPAS</b></div>
+    <div class="cj cj-tit"><span>Título</span><b id="cj-titulo">Atracción</b></div>
+    <div class="cj"><span>Hoja</span><b id="cj-hoja">1/11</b></div>
+    <div class="cj"><span>Juez</span><b id="cj-juez">— — —</b></div>
+    <div class="cj"><span>Junta</span><b id="cj-junta">—</b></div>
+    <div class="cj"><span>Escala</span><b>1:2</b></div>
+    <div class="cj"><span>Fecha</span><b id="cj-fecha">—</b></div>
+  </aside>
+
+  <!-- Sellos de revisión ("COMBO x4", "¡QUEMADO!") -->
+  <div class="sellos" id="sellos" aria-live="polite"></div>
+  <div class="destello" id="destello" aria-hidden="true"></div>
+  <div class="barrido" id="barrido" aria-hidden="true"></div>
+
+</div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

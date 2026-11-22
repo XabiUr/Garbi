@@ -1,0 +1,203 @@
+<title>Machero</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: una sola columna; la mesa vista desde arriba es el centro, el flujo y los riesgos debajo */
+:root {
+  --bg: #f3f4f2;
+  --panel: #ffffff;
+  --fg: #1d2326;
+  --muted: #5d676c;
+  --line: #d5dad8;
+  --sand: #c9a86a;
+  --sand-dark: #9c7c43;
+  --iron: #3c474d;
+  --molten: #e0621b;
+  --ok: #2f8a4d;
+  --table: #e4e7e4;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15191b; --panel: #1e2427; --fg: #e8ecea; --muted: #9aa5a9; --line: #333c40;
+    --sand: #d4b47a; --sand-dark: #a88a52; --iron: #8e9ca3; --molten: #f07a36; --ok: #4fb36e; --table: #252c2f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15191b; --panel: #1e2427; --fg: #e8ecea; --muted: #9aa5a9; --line: #333c40;
+  --sand: #d4b47a; --sand-dark: #a88a52; --iron: #8e9ca3; --molten: #f07a36; --ok: #4fb36e; --table: #252c2f;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--molten); }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 7vw, 54px); line-height: 1; margin: 0; letter-spacing: -.01em; }
+.lead { font-size: clamp(17px, 2.6vw, 20px); margin: 4px 0 0; max-width: 60ch; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 700; font-size: 20px; margin: 0 0 12px; }
+.scene { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+.scene svg { display: block; width: 100%; height: auto; }
+.caption { font-size: 13px; color: var(--muted); margin: 8px 4px 0; }
+svg text { font-family: var(--body); fill: var(--fg); }
+svg .lbl { font-size: 13px; font-weight: 600; }
+svg .sub { font-size: 11px; fill: var(--muted); }
+svg .mono { font-family: var(--mono); font-size: 11px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.steps li { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 4px; align-content: start; }
+.n { font-family: var(--mono); font-size: 12px; color: var(--molten); }
+.steps b { font-family: var(--display); font-size: 15px; }
+.steps span { font-size: 13.5px; color: var(--muted); }
+.orders { display: flex; flex-wrap: wrap; gap: 8px; }
+.order { font-family: var(--mono); font-size: 13px; padding: 7px 11px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); }
+.order.crit { border-color: var(--molten); color: var(--molten); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; min-width: 0; }
+.box ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.quote { font-family: var(--display); font-weight: 700; font-size: 18px; border-left: 3px solid var(--molten); padding-left: 12px; margin: 0 0 12px; }
+.gate { border-color: var(--molten); }
+.note { font-size: 13px; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Robotalde · propuesta del consejo · 18-11-2026</div>
+    <h1>Machero</h1>
+    <p class="lead">El robot coloca en el molde los machos de arena de la referencia que le pides y aparta los rotos. Una referencia nueva se enseña, no se programa.</p>
+  </header>
+
+  <section class="scene" aria-label="La mesa de la demo vista desde arriba">
+    <svg viewBox="0 0 820 440" role="img" aria-labelledby="t1">
+      <title id="t1">Mesa vista desde arriba: bandeja de machos a la izquierda, robot en el centro, molde con dos portadas a la derecha, caja de rotos abajo, juez y tablet delante</title>
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/>
+        </marker>
+      </defs>
+      <!-- mesa -->
+      <rect x="10" y="10" width="800" height="330" rx="14" fill="var(--table)" stroke="var(--line)"/>
+
+      <!-- cámara -->
+      <g transform="translate(410,30)">
+        <rect x="-22" y="-10" width="44" height="20" rx="4" fill="var(--iron)"/>
+        <circle cx="0" cy="0" r="6" fill="var(--panel)"/>
+        <text x="32" y="5" class="sub">cámara fija</text>
+      </g>
+
+      <!-- bandeja -->
+      <rect x="40" y="70" width="210" height="200" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+      <text x="52" y="92" class="lbl">Bandeja de machos</text>
+      <!-- machos A: cilindros -->
+      <g>
+        <rect x="60" y="112" width="44" height="22" rx="11" fill="var(--sand)" stroke="var(--sand-dark)"/>
+        <rect x="114" y="112" width="44" height="22" rx="11" fill="var(--sand)" stroke="var(--sand-dark)"/>
+        <rect x="168" y="112" width="44" height="22" rx="11" fill="var(--sand)" stroke="var(--sand-dark)"/>
+        <text x="220" y="128" class="mono">A</text>
+      </g>
+      <!-- machos B: forma en T -->
+      <g fill="var(--sand)" stroke="var(--sand-dark)">
+        <path d="M60,160 h44 v10 h-14 v18 h-16 v-18 h-14 z"/>
+        <path d="M114,160 h44 v10 h-14 v18 h-16 v-18 h-14 z"/>
+      </g>
+      <text x="220" y="178" class="mono">B</text>
+      <!-- roto -->
+      <g>
+        <rect x="60" y="212" width="20" height="22" rx="8" fill="var(--sand)" stroke="var(--molten)" stroke-width="2"/>
+        <rect x="86" y="216" width="18" height="18" rx="6" fill="var(--sand)" stroke="var(--molten)" stroke-width="2" transform="rotate(14 95 225)"/>
+        <text x="116" y="228" class="sub" style="fill:var(--molten)">macho roto</text>
+      </g>
+
+      <!-- robot -->
+      <g>
+        <circle cx="410" cy="220" r="34" fill="var(--iron)"/>
+        <circle cx="410" cy="220" r="14" fill="var(--panel)"/>
+        <path d="M410,220 L470,170 L540,175" stroke="var(--iron)" stroke-width="12" stroke-linecap="round" fill="none"/>
+        <path d="M540,175 l14,-8 M540,175 l14,8" stroke="var(--iron)" stroke-width="5" stroke-linecap="round"/>
+        <text x="410" y="275" text-anchor="middle" class="lbl">SO-101</text>
+        <text x="410" y="292" text-anchor="middle" class="sub">SmolVLA · plan B: ACT</text>
+      </g>
+
+      <!-- molde -->
+      <rect x="590" y="70" width="190" height="170" rx="8" fill="var(--panel)" stroke="var(--iron)" stroke-width="2"/>
+      <text x="602" y="92" class="lbl">Molde (caja inferior)</text>
+      <!-- portada 1 con macho -->
+      <path d="M610,130 l20,24 h40 l20,-24" fill="none" stroke="var(--iron)" stroke-width="3"/>
+      <rect x="628" y="128" width="44" height="22" rx="11" fill="var(--sand)" stroke="var(--sand-dark)"/>
+      <circle cx="702" cy="140" r="7" fill="var(--ok)"/>
+      <text x="714" y="144" class="sub">sensor OK</text>
+      <!-- portada 2 vacía -->
+      <path d="M610,190 l20,24 h40 l20,-24" fill="none" stroke="var(--iron)" stroke-width="3"/>
+      <circle cx="702" cy="200" r="7" fill="none" stroke="var(--muted)" stroke-width="2"/>
+      <text x="714" y="204" class="sub">vacía</text>
+      <text x="602" y="232" class="sub">portadas en V · ±1 cm</text>
+
+      <!-- caja de rotos -->
+      <rect x="590" y="262" width="190" height="56" rx="8" fill="var(--panel)" stroke="var(--molten)" stroke-dasharray="5 4"/>
+      <text x="602" y="285" class="lbl" style="fill:var(--molten)">Rotos</text>
+      <text x="602" y="304" class="sub">rechazo a la vista</text>
+
+      <!-- flechas -->
+      <path d="M215,123 C330,60 500,70 600,120" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+      <path d="M105,232 C260,330 470,330 585,292" fill="none" stroke="var(--molten)" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+
+      <!-- juez y tablet -->
+      <g transform="translate(250,385)">
+        <circle cx="0" cy="-8" r="12" fill="var(--iron)"/>
+        <path d="M-20,30 q20,-34 40,0" fill="var(--iron)"/>
+        <text x="30" y="-6" class="lbl">Juez</text>
+        <text x="30" y="12" class="sub">pide la referencia, luego cierra el molde</text>
+      </g>
+      <g transform="translate(590,355)">
+        <rect width="190" height="72" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="12" y="22" class="sub">Tablet</text>
+        <text x="12" y="44" class="mono">REFERENCIA A</text>
+        <circle cx="160" cy="40" r="10" fill="var(--ok)"/>
+        <text x="12" y="62" class="sub">o alarma: falta macho</text>
+      </g>
+    </svg>
+    <p class="caption">Mesa vista desde arriba. Todo lo que coge el robot es grueso y cae en una portada en V que corrige hasta 1 cm de error.</p>
+  </section>
+
+  <section>
+    <h2>Cómo va la demo</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><b>El juez pide</b><span>"Prepara el molde de la referencia A." El LLM lo convierte en una orden fija.</span></li>
+      <li><span class="n">2</span><b>El robot elige</b><span>Coge los machos de la A entre todos los de la bandeja.</span></li>
+      <li><span class="n">3</span><b>Aparta lo roto</b><span>Si ve un macho roto, lo lleva a la caja de rotos.</span></li>
+      <li><span class="n">4</span><b>Los sensores confirman</b><span>Cada portada sabe si tiene macho. La tablet da OK o "falta macho".</span></li>
+      <li><span class="n">5</span><b>El juez cierra</b><span>Solo si todo está bien. Luego otra referencia, con la misma red.</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Lo que oye la red (frases fijas del dataset)</h2>
+    <div class="orders">
+      <span class="order">place the cores for part A</span>
+      <span class="order">place the cores for part B</span>
+      <span class="order crit">remove the broken cores</span>
+    </div>
+    <p class="note">Las dos primeras cambian el objeto; la tercera cambia el criterio. Unas 50 demostraciones por frase.</p>
+  </section>
+
+  <section class="cols">
+    <div class="box">
+      <h2>Por qué es real</h2>
+      <p class="quote">Una referencia nueva no debería costar una integración.</p>
+      <ul>
+        <li>En fundición de series cortas, los machos se colocan a mano. Ya hay robots que los colocan en series largas.</li>
+        <li>Integrar un robot cuesta el 40-60 % de la célula, y hay que reprogramarlo en cada cambio de referencia.</li>
+        <li>Lo mismo que persigue el proyecto vasco IKASprod (Tecnalia, Tekniker): robots que aprenden por demostración y voz.</li>
+      </ul>
+    </div>
+    <div class="box gate">
+      <h2>Lo que tiene que salir bien</h2>
+      <ul>
+        <li><b>Antes del viernes:</b> una llamada a una fundición, IMH Campus o AFM que confirme el dolor con una cifra o una cita.</li>
+        <li><b>Sábado por la mañana:</b> probar cada frase por separado. Si la red ignora la frase, un ACT por frase.</li>
+        <li><b>Si no se valida:</b> plan B, Calidad (cuarentena por lote) con las mismas piezas de software.</li>
+      </ul>
+    </div>
+  </section>
+</div>

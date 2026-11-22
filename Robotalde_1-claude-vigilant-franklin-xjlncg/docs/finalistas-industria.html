@@ -1,0 +1,185 @@
+<title>Cinco demos de fábrica</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: cabecera breve y una tarjeta por idea, con el dibujo arriba y tres datos debajo; rejilla que pasa a una columna en móvil */
+:root {
+  --bg: #eef1f4;
+  --card: #ffffff;
+  --fg: #1a2229;
+  --muted: #5b6873;
+  --line: #d3dae0;
+  --belt: #8a96a0;
+  --part: #2d6fd6;
+  --part2: #f2a516;
+  --alert: #dc4a2b;
+  --ok: #27935a;
+  --arm: #35424c;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12171b; --card: #1b2227; --fg: #e7ecef; --muted: #98a6b0; --line: #2f3a41;
+    --belt: #6b7882; --part: #5b93ee; --part2: #f5b844; --alert: #f06a4b; --ok: #45b878; --arm: #a9b6bf;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12171b; --card: #1b2227; --fg: #e7ecef; --muted: #98a6b0; --line: #2f3a41;
+  --belt: #6b7882; --part: #5b93ee; --part2: #f5b844; --alert: #f06a4b; --ok: #45b878; --arm: #a9b6bf;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 24px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--part); }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(28px, 5.5vw, 44px); line-height: 1.05; margin: 0; text-wrap: balance; }
+.lead { margin: 0; max-width: 68ch; color: var(--muted); }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.filters span { font-size: 13px; border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 4px 10px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.card.top { border-color: var(--part); box-shadow: 0 0 0 1px var(--part); }
+.head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+h2 { font-family: var(--display); font-weight: 800; font-size: 22px; margin: 0; }
+.tag { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.tag.hot { color: var(--part); }
+svg { display: block; width: 100%; height: auto; background: var(--bg); border-radius: 8px; }
+svg text { font-family: var(--body); fill: var(--fg); font-size: 12px; }
+svg .s { fill: var(--muted); font-size: 11px; }
+.what { margin: 0; }
+dl { margin: 0; display: grid; gap: 6px; }
+dt { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+dd { margin: 0 0 4px; font-size: 14px; }
+.say { font-family: var(--mono); font-size: 12.5px; }
+.risk { color: var(--alert); }
+.extra { background: var(--card); border: 1px dashed var(--line); border-radius: 12px; padding: 14px 16px; }
+.extra h2 { font-size: 18px; margin-bottom: 4px; }
+.extra p { margin: 0; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Robotalde · finalistas de industria · 18-11-2026</div>
+    <h1>Cinco demos de fábrica para elegir</h1>
+    <p class="lead">Salen de copiar lo que hizo ganar a los 37 proyectos de referencia y pasarlo a industria. Todas pasan tus tres filtros tras rechazar Machero.</p>
+    <div class="filters"><span>Tema que se reconoce al instante</span><span>Necesidad evidente</span><span>Demo con movimiento y final visible</span></div>
+  </header>
+
+  <div class="grid">
+
+    <article class="card top">
+      <div class="head"><h2>Coche a la carta</h2><span class="tag hot">salió en 2 análisis</span></div>
+      <svg viewBox="0 0 320 150" role="img" aria-label="El robot coloca techo y paragolpes sobre un coche de maqueta en una rampa">
+        <rect x="14" y="20" width="70" height="90" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="20" y="36" class="s">piezas</text>
+        <rect x="24" y="46" width="22" height="12" rx="3" fill="var(--part)"/><rect x="52" y="46" width="22" height="12" rx="3" fill="var(--alert)"/>
+        <rect x="24" y="70" width="22" height="8" rx="3" fill="var(--part2)"/><rect x="52" y="70" width="22" height="8" rx="3" fill="var(--ok)"/>
+        <circle cx="140" cy="118" r="14" fill="var(--arm)"/>
+        <path d="M140,118 L165,70 L200,62" stroke="var(--arm)" stroke-width="8" stroke-linecap="round" fill="none"/>
+        <rect x="190" y="52" width="26" height="10" rx="3" fill="var(--part)"/>
+        <path d="M200,100 L300,130" stroke="var(--belt)" stroke-width="4"/>
+        <rect x="214" y="86" width="56" height="18" rx="5" fill="var(--part2)" transform="rotate(16 242 95)"/>
+        <circle cx="222" cy="106" r="5" fill="var(--arm)"/><circle cx="258" cy="116" r="5" fill="var(--arm)"/>
+        <text x="236" y="146" class="s">baja rodando al juez</text>
+      </svg>
+      <p class="what">El juez elige su coche por voz (carrocería, techo, paragolpes). El robot lo monta con imanes y el coche baja rodando hasta él.</p>
+      <dl>
+        <dt>Frase del VLA</dt><dd class="say">"blue roof, red bumper"</dd>
+        <dt>Por qué es real</dt><dd>Las líneas de coches montan versiones distintas una tras otra (Mercedes en Vitoria).</dd>
+        <dt>Riesgo</dt><dd class="risk">Que parezca un juguete. Cifra de necesidad débil.</dd>
+      </dl>
+    </article>
+
+    <article class="card top">
+      <div class="head"><h2>Línea parada</h2><span class="tag hot">salió en 2 análisis</span></div>
+      <svg viewBox="0 0 320 150" role="img" aria-label="Minicinta con botellas; una está tumbada, la baliza está en rojo y el robot la levanta">
+        <rect x="10" y="80" width="300" height="22" rx="11" fill="var(--belt)"/>
+        <rect x="30" y="50" width="14" height="30" rx="4" fill="var(--part)"/>
+        <rect x="70" y="50" width="14" height="30" rx="4" fill="var(--part)"/>
+        <rect x="140" y="66" width="30" height="14" rx="4" fill="var(--part)"/>
+        <rect x="220" y="50" width="14" height="30" rx="4" fill="var(--part)"/>
+        <rect x="282" y="20" width="16" height="22" rx="4" fill="var(--alert)"/><text x="244" y="16" class="s">baliza</text>
+        <circle cx="155" cy="135" r="12" fill="var(--arm)"/>
+        <path d="M155,135 L130,112 L150,82" stroke="var(--arm)" stroke-width="7" stroke-linecap="round" fill="none"/>
+        <text x="182" y="128" class="s">el juez tumba una botella</text>
+      </svg>
+      <p class="what">Pasan botellas por una minicinta. El juez tumba una: la cinta se para y la baliza se pone roja. El robot la levanta o la retira según la frase, y la cinta arranca otra vez.</p>
+      <dl>
+        <dt>Frase del VLA</dt><dd class="say">"stand it up" · "remove bottles without cap"</dd>
+        <dt>Por qué es real</dt><dd>Las microparadas son una de las mayores pérdidas en las líneas de envasado. La recuperación es la propia demo.</dd>
+        <dt>Riesgo</dt><dd class="risk">Levantar una botella tumbada es difícil. Se parece a Flip &amp; Ship.</dd>
+      </dl>
+    </article>
+
+    <article class="card">
+      <div class="head"><h2>Pila Sabia</h2><span class="tag">Hugging Face</span></div>
+      <svg viewBox="0 0 320 150" role="img" aria-label="El robot apila cajas en un palé con las pesadas abajo y lo frágil arriba">
+        <rect x="190" y="118" width="110" height="10" fill="var(--part2)"/>
+        <rect x="196" y="92" width="46" height="26" fill="var(--arm)"/><rect x="248" y="92" width="46" height="26" fill="var(--arm)"/>
+        <rect x="204" y="70" width="40" height="22" fill="var(--part)"/><rect x="250" y="70" width="40" height="22" fill="var(--part)"/>
+        <rect x="226" y="52" width="36" height="18" fill="var(--card)" stroke="var(--alert)" stroke-width="2"/>
+        <text x="200" y="146" class="s">pesadas abajo, frágil arriba</text>
+        <circle cx="110" cy="128" r="12" fill="var(--arm)"/>
+        <path d="M110,128 L130,80 L200,46" stroke="var(--arm)" stroke-width="7" stroke-linecap="round" fill="none"/>
+        <rect x="14" y="70" width="70" height="58" rx="5" fill="var(--card)" stroke="var(--line)"/><text x="22" y="86" class="s">pedido</text>
+      </svg>
+      <p class="what">El robot monta el palé de un pedido siguiendo reglas dichas en voz alta. El juez puede corregirlo a mitad: "solo dos alturas".</p>
+      <dl>
+        <dt>Frase del VLA</dt><dd class="say">"heavy at the bottom, fragile on top"</dd>
+        <dt>Por qué es real</dt><dd>Paletizar a mano es trabajo pesado: el 52 % de los trabajadores de la UE tiene dolor de espalda.</dd>
+        <dt>Riesgo</dt><dd class="risk">Que la torre se caiga en vivo. Otro equipo ya hizo paletizado.</dd>
+      </dl>
+    </article>
+
+    <article class="card">
+      <div class="head"><h2>Repón</h2><span class="tag">Europa</span></div>
+      <svg viewBox="0 0 320 150" role="img" aria-label="Lineal de supermercado con huecos que el robot rellena">
+        <rect x="160" y="20" width="150" height="110" rx="4" fill="var(--card)" stroke="var(--line)"/>
+        <line x1="160" y1="75" x2="310" y2="75" stroke="var(--line)" stroke-width="2"/>
+        <rect x="170" y="35" width="24" height="36" fill="var(--part)"/><rect x="200" y="35" width="24" height="36" fill="var(--part)"/>
+        <rect x="230" y="35" width="24" height="36" fill="none" stroke="var(--alert)" stroke-dasharray="4 3"/>
+        <rect x="260" y="35" width="24" height="36" fill="var(--part2)"/>
+        <rect x="170" y="88" width="24" height="36" fill="none" stroke="var(--alert)" stroke-dasharray="4 3"/>
+        <rect x="200" y="88" width="24" height="36" fill="var(--ok)"/><rect x="230" y="88" width="24" height="36" fill="var(--ok)"/>
+        <circle cx="80" cy="128" r="12" fill="var(--arm)"/>
+        <path d="M80,128 L100,80 L150,58" stroke="var(--arm)" stroke-width="7" stroke-linecap="round" fill="none"/>
+        <text x="14" y="30" class="s">el juez "compra"</text>
+      </svg>
+      <p class="what">El juez coge productos del lineal y el robot repone solo los huecos. La frase cambia la regla: marca blanca si no queda, lo que caduca antes delante.</p>
+      <dl>
+        <dt>Frase del VLA</dt><dd class="say">"refill the gaps" · "use the store brand"</dd>
+        <dt>Por qué es real</dt><dd>Alrededor del 8 % de los productos falta en el lineal en algún momento.</dd>
+        <dt>Riesgo</dt><dd class="risk">Es comercio, no fábrica. Se parece a los kits.</dd>
+      </dl>
+    </article>
+
+    <article class="card">
+      <div class="head"><h2>Pulsa</h2><span class="tag">la más fiable</span></div>
+      <svg viewBox="0 0 320 150" role="img" aria-label="El robot pulsa los botones de un panel de horno y se encienden los LED">
+        <rect x="150" y="40" width="150" height="80" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="160" y="58" class="s">panel de horno</text>
+        <circle cx="180" cy="90" r="11" fill="var(--ok)"/><circle cx="215" cy="90" r="11" fill="var(--ok)"/>
+        <circle cx="250" cy="90" r="11" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+        <circle cx="285" cy="90" r="11" fill="var(--alert)"/>
+        <circle cx="80" cy="128" r="12" fill="var(--arm)"/>
+        <path d="M80,128 L120,70 L248,72" stroke="var(--arm)" stroke-width="7" stroke-linecap="round" fill="none"/>
+        <text x="236" y="140" class="s">botón averiado</text>
+      </svg>
+      <p class="what">El robot prueba los botones de un panel según el plan que se le dicta. Los LED se encienden. El juez avería un botón en secreto y el robot aparta el panel a rechazo.</p>
+      <dl>
+        <dt>Frase del VLA</dt><dd class="say">"test the top row" · "reject this panel"</dd>
+        <dt>Por qué es real</dt><dd>Probar paneles y mandos al final de línea se hace a mano; FANUC ya lo automatiza en hornos V-Zug.</dd>
+        <dt>Riesgo</dt><dd class="risk">Pulsar es poco espectacular. La cifra de necesidad es débil.</dd>
+      </dl>
+    </article>
+
+    <article class="extra">
+      <h2>Capa que se suma a cualquiera: Rescate</h2>
+      <p>Cuando el robot duda, el juez toma el brazo guía y lo corrige. Cada rescate se guarda para reentrenar y la pantalla cuenta "autónomo 7 de 8". El fallo pasa a ser parte del guion, como en las fábricas donde una persona supervisa a muchos robots.</p>
+    </article>
+
+  </div>
+</div>

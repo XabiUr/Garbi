@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="285.00mm" height="175.00mm" viewBox="0 0 285.000 175.000">
+<rect x="0" y="0" width="285.000" height="175.000" fill="#ffffff"/>
+<polygon points="133.120,73.471 76.476,47.058 12.094,102.532 132.008,158.449" fill="none" stroke="#1565c0" stroke-width="0.350" stroke-dasharray="2.00 1.00"/>
+<polygon points="113.524,47.058 56.880,73.471 57.992,158.449 177.906,102.532" fill="none" stroke="#2e7d32" stroke-width="0.350" stroke-dasharray="2.00 1.00"/>
+<polygon points="108.140,109.650 108.140,99.641 96.518,99.641 96.518,109.650" fill="#cfd8dc" stroke="#37474f" stroke-width="0.300"/>
+<polygon points="87.428,102.282 88.065,102.092 88.684,101.848 89.279,101.551 89.845,101.203 90.379,100.807 90.877,100.366 91.055,100.188 91.334,99.883 91.496,99.690 91.748,99.362 91.892,99.156 92.114,98.807 92.240,98.589 92.431,98.222 92.537,97.994 92.696,97.612 92.782,97.376 92.906,96.982 92.971,96.739 93.061,96.335 93.104,96.087 93.158,95.677 93.180,95.426 93.198,95.013 93.198,89.527 93.180,89.114 93.158,88.863 93.104,88.453 93.061,88.205 92.971,87.801 92.906,87.559 92.782,87.164 92.696,86.928 92.537,86.546 92.431,86.318 92.240,85.951 92.114,85.733 91.892,85.384 91.748,85.178 91.496,84.850 91.334,84.657 91.055,84.352 90.877,84.175 90.379,83.733 89.845,83.337 89.279,82.989 88.684,82.692 88.065,82.448 87.428,82.258 76.397,82.258 75.760,82.448 75.141,82.692 74.546,82.989 73.980,83.337 73.445,83.733 72.948,84.175 72.770,84.352 72.491,84.657 72.329,84.850 72.077,85.178 71.933,85.384 71.711,85.733 71.585,85.951 71.394,86.318 71.288,86.546 71.129,86.928 71.043,87.164 70.919,87.559 70.854,87.801 70.764,88.205 70.721,88.453 70.667,88.863 70.645,89.114 70.627,89.527 70.627,95.013 70.645,95.426 70.667,95.677 70.721,96.087 70.764,96.335 70.854,96.739 70.919,96.982 71.043,97.376 71.129,97.612 71.288,97.994 71.394,98.222 71.585,98.589 71.711,98.807 71.933,99.156 72.077,99.362 72.329,99.690 72.491,99.883 72.770,100.188 72.948,100.366 73.445,100.807 73.980,101.203 74.546,101.551 75.141,101.848 75.760,102.092 76.397,102.282" fill="#fff3e0" stroke="#ef6c00" stroke-width="0.250"/>
+<polygon points="109.135,72.901 88.194,72.901 88.194,81.277 109.135,81.277" fill="#eeeeee" stroke="#000000" stroke-width="0.300"/>
+<polygon points="106.517,81.277 90.812,81.277 90.812,81.591 106.517,81.591" fill="#eeeeee" stroke="#000000" stroke-width="0.300"/>
+<polyline points="114.204,40.094 95.000,81.277" fill="none" stroke="#1565c0" stroke-width="0.300"/>
+<circle cx="114.204" cy="40.094" r="2.500" fill="#000000"/>
+<text x="120.204" y="40.094" font-size="2.500" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">A (633, -113, 450)</text>
+<polyline points="75.796,40.094 95.000,81.277" fill="none" stroke="#2e7d32" stroke-width="0.300"/>
+<circle cx="75.796" cy="40.094" r="2.500" fill="#000000"/>
+<text x="81.796" y="40.094" font-size="2.500" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">B (633, 253, 450)</text>
+<text x="190.000" y="40.000" font-size="3.000" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-weight="bold">Huellas con FOV 65° (16:9)</text>
+<text x="185.000" y="46.000" font-size="2.400" fill="#1565c0" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Cámara A: altura 450, incl. 45°, azimut -25°</text>
+<text x="185.000" y="50.200" font-size="2.400" fill="#1565c0" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">   FOV mínimo 51°</text>
+<text x="185.000" y="54.400" font-size="2.400" fill="#2e7d32" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Cámara B: altura 450, incl. 45°, azimut 25°</text>
+<text x="185.000" y="58.600" font-size="2.400" fill="#2e7d32" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">   FOV mínimo 51,1°</text>
+<polyline points="198.000,124.800 198.000,97.800" fill="none" stroke="#424242" stroke-width="0.600"/>
+<polyline points="198.000,97.800 205.200,97.800" fill="none" stroke="#424242" stroke-width="0.600"/>
+<polyline points="205.200,97.800 222.171,114.771" fill="none" stroke="#1565c0" stroke-width="0.300" stroke-dasharray="1.00 0.80"/>
+<polyline points="205.200,97.800 205.200,112.800" fill="none" stroke="#757575" stroke-width="0.150" stroke-dasharray="0.60 0.60"/>
+<polygon points="202.800,99.000 207.600,99.000 207.600,96.600 202.800,96.600" fill="#000000"/>
+<text x="208.800" y="112.800" font-size="2.600" fill="#1565c0" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">45°</text>
+<text x="198.000" y="132.000" font-size="2.500" fill="#000000" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">A: 450 mm</text>
+<polyline points="243.000,124.800 243.000,97.800" fill="none" stroke="#424242" stroke-width="0.600"/>
+<polyline points="243.000,97.800 250.200,97.800" fill="none" stroke="#424242" stroke-width="0.600"/>
+<polyline points="250.200,97.800 267.171,114.771" fill="none" stroke="#2e7d32" stroke-width="0.300" stroke-dasharray="1.00 0.80"/>
+<polyline points="250.200,97.800 250.200,112.800" fill="none" stroke="#757575" stroke-width="0.150" stroke-dasharray="0.60 0.60"/>
+<polygon points="247.800,99.000 252.600,99.000 252.600,96.600 247.800,96.600" fill="#000000"/>
+<text x="253.800" y="112.800" font-size="2.600" fill="#2e7d32" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">45°</text>
+<text x="243.000" y="132.000" font-size="2.500" fill="#000000" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">B: 450 mm</text>
+<text x="8.000" y="10.000" font-size="5.000" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-weight="bold">Webcams estéreo (vista superior de la mesa y esquema lateral)</text>
+<text x="8.000" y="16.000" font-size="3.000" fill="#333333" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Discontinuo: lo que ve cada webcam sobre la mesa (Z = 0). Naranja: barrido de la chapa tumbada en la zona libre; gris: base. Robot abajo, +X hacia arriba.</text>
+<text x="8.000" y="20.200" font-size="3.000" fill="#333333" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Esquema lateral: brazo o trípode con rosca 1/4"; inclinación del eje óptico respecto a la vertical.</text>
+</svg>

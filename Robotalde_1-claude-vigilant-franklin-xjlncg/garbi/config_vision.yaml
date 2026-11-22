@@ -1,0 +1,50 @@
+# Umbrales de color de la visión de Garbi en el sitio (los escribe herramientas/garbi_ajustar_color.py).
+#
+# Formato (versión 1), para quien lea este archivo desde la percepción (garbi/config_vision.py lo carga):
+#   colores:
+#     <nombre>:
+#       bajo: [H, S, V]   # HSV de OpenCV: H 0-179, S 0-255, V 0-255 (imagen RGB → cv2.COLOR_RGB2HSV)
+#       alto: [H, S, V]
+#       nota: texto libre
+#   Si bajo.H > alto.H, el tono da la vuelta (p. ej. piel o rojo: H de 170 a 179 y de 0 a 15).
+#
+# Nombres fijos (no cambiarlos: los usan la percepción, las herramientas y los tests):
+#   tapete_azul, madera, bola_naranja, anillo_verde, piel, pegatina
+version: 1
+colores:
+  tapete_azul:
+    bajo: [100, 100, 35]
+    alto: [130, 255, 255]
+    nota: tapete azul de corte (esquinas → cámara de arriba)
+  madera:
+    bajo: [14, 15, 80]
+    alto: [32, 120, 255]
+    nota: madera clara sin vinilo (también en la sombra del taladro)
+  bola_naranja:
+    bajo: [5, 150, 110]
+    alto: [22, 255, 255]
+    nota: bola naranja fluorescente del taladro
+  anillo_verde:
+    bajo: [40, 80, 25]
+    alto: [66, 255, 255]
+    nota: anillo verde lima de la boquilla (calibración robot-mesa)
+  piel:
+    bajo: [0, 55, 110]
+    alto: [15, 165, 255]
+    nota: manos (respaldo de MediaPipe)
+  pegatina:
+    bajo: [140, 90, 70]
+    alto: [175, 255, 255]
+    nota: pegatina de color en una esquina de la madera (magenta por defecto; resuelve el giro de 180°)
+# Parámetros de la percepción que no son colores de la herramienta (garbi.config_vision.PARAMETROS_POR_DEFECTO;
+# ajustados en la simulación). La herramienta de color conserva esta sección al guardar.
+parametros:
+  tapete: {fuera_min: 0.75}
+  madera: {bordes_min: 40, salto_mm: 6.0, bordes_min_salto: 80}
+  pegatina: {area_min: 40, distancia_max: 35.0}
+  bola: {area: [30, 6000]}
+  manos: {area: [350, 30000], altura_palma: 14.0}
+  broca: {sat_max: 60, v_min: 70, v_max: 240}
+  robot: {bajo: [15, 100, 60], alto: [35, 255, 255]}
+  serrin: {bajo: [16, 95, 90], alto: [32, 200, 255]}
+  morado: {bajo: [128, 80, 60], alto: [165, 255, 255]}  # círculo morado del taladro (producto)

@@ -1,0 +1,14 @@
+# Dependencias para el sistema de seguimiento de taladro con SO-101
+
+# Visión y procesamiento de imágenes
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# Dataset y almacenamiento
+pyarrow>=12.0.0
+
+# LeRobot (ya debe estar instalado, pero incluido por referencia)
+# lerobot>=0.7.0
+
+# Nota: Si lerobot no está instalado, instalarlo con:
+# pip install lerobot

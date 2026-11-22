@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Sistema
+.DS_Store
+
+# Logs por ciclo del supervisor (pesan y cambian en cada prueba; están en la copia de seguridad)
+plana/log_supervisor_*.csv

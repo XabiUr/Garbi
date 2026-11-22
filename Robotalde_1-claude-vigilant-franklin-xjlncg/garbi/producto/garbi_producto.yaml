@@ -1,0 +1,96 @@
+# Configuración del producto Garbi (garbi/producto/config.py y garbi/producto/vision.py). Plan:
+# .plans/aspira/producto.md
+#   python -m garbi.producto           # robot real (lee este archivo)
+#   python -m garbi.producto --demo    # sin hardware (robot, cámaras y escena falsos)
+# MONTAJE DEL EQUIPO: articulaciones en unidades normalizadas de LeRobot (use_degrees: false) y cámara de arriba a
+# 640 × 360 (como el dataset Xaflas/taladro-fijo). Los «°/s» de abajo son unidades/s.
+# Lo marcado «MEDIR» es un valor de ejemplo: medirlo en el sitio. Articulaciones en grados de LeRobot, en el orden
+# shoulder_pan, shoulder_lift, elbow_flex, wrist_flex, wrist_roll, gripper (pinza 0-100). Posiciones en píxeles de la
+# cámara de arriba (640 × 480). Tiempos en segundos.
+
+puertos:
+  follower: /dev/tty.usbmodem5A7A0589611   # Mac del equipo (plana/config.json)
+  aspiradora: null              # null = sin Arduino: modo manual (se enciende con el pie). Con Arduino: /dev/ttyUSB0
+
+camaras:
+  top: 1                        # cenital ("front" en el dataset Xaflas/taladro-fijo)
+  wrist: 0                      # pinza ("gripper" en el dataset)
+  resolucion:                   # como se grabó el dataset: no cambiar o ACT verá otra imagen
+    top: [640, 360]
+    wrist: [640, 480]
+
+id_robot: so100_follower        # el id con el que se calibró el seguidor y se grabó el dataset
+use_degrees: false              # el equipo graba en unidades normalizadas (-100..100): dataset, matriz y posturas
+
+# Reposo: girado a la derecha, fuera del paso. MEDIR (leer la postura con el robot colocado a mano).
+postura_reposo: [69.84, 7.78, -0.42, 5.85, -2.04, 0.0]        # plana/posturas.json → reposo (inicio de los episodios)
+# Despierto: postura de espera entre agujeros. MEDIR.
+postura_despierto: [-2.32, -1.57, -22.93, 72.46, -4.55, 0.0]  # plana/config.json → posicion_intermedia
+
+politica: circulo               # act (ACT entrenado) | circulo (respaldo: círculo morado + matriz)
+act_desde: reposo               # reposo (como en el entrenamiento: vuelve a reposo antes de cada agujero) | despierto
+
+act:
+  # Carpeta local del checkpoint (…/checkpoints/last/pretrained_model, o la carpeta de salida del entrenamiento)
+  # o repo del Hub (usuario/garbi_act). Las cámaras y el estado se leen de las input_features del modelo.
+  modelo: salidas/garbi_act/checkpoints/last/pretrained_model   # MEDIR: aún no hay checkpoint en este Mac
+  dispositivo: mps              # cpu | cuda | mps (Mac)
+  camaras: {front: top, gripper: wrist}                 # vacío = automático. Si el dataset usa otros nombres: {front: top, hand: wrist}
+  estado: medido                # medido (postura leída, como lerobot-record) | orden (la acción anterior)
+  ensemble: null                # ensemble temporal de ACT (p. ej. 0.01); null = trozos de acciones normales
+  umbral_llegada: 0.5           # ha llegado cuando la acción cambia menos de esto (grados)...
+  pasos_llegada: 15             # ...durante estos pasos seguidos (0,5 s a 30 Hz)
+  tiempo_max: 12.0              # o a los X s, aunque no converja
+  tarea: "Approach the drill bit."
+
+circulo:
+  postura_intermedia: [-2.32, -1.57, -22.93, 72.46, -4.55, 0.0]   # la intermedia del equipo; null = directo. Despliegue por una postura segura (6 grados) antes de ir al destino; null = directo
+  velocidad: 30.0               # unidades/s pico por articulación (el equipo: velocidad_trayectoria 30)
+  tolerancia: 1.0               # grados para dar por alcanzado el destino
+  actualizar_px: 4.0            # si el círculo se mueve más que esto durante el acercamiento, se re-apunta
+
+matriz:
+  ruta: garbi/producto/matriz_equipo.csv   # herramientas/convertir_matriz_plana.py (posición = círculo morado, px 640×360)
+  posicion: uv                  # auto | uv (px de la cámara de arriba) | xy (mm del tapete)
+  tapete_mm: [450.0, 400.0]     # ancho y alto del tapete (solo si la matriz va en mm): el del equipo es 450 × 400
+  wrist_roll: 0.0               # si la matriz no trae wrist_roll
+  pinza: 0.0                    # si la matriz trae 5 articulaciones (sin pinza)
+  extrapolar_max_px: 80.0       # fuera de la rejilla se extrapola como mucho esto (y se avisa)
+
+tiempos:
+  quieto_desde_reposo: 1.0      # círculo quieto (con mano + taladro) para acercarse desde REPOSO
+  quieto_desde_despierto: 2.0   # ídem desde DESPIERTO
+  rango_salida_px: 60.0         # el taladro se aleja más que esto del punto de llegada → DESPIERTO
+  perdido: 0.7                  # sin mano + taladro durante esto → se ha ido
+  sin_taladro_limpiar: 5.0      # sin taladro en escena (tras ≥1 agujero, con tabla) → LIMPIEZA_TABLA
+  sin_tabla: 1.5                # sin ver la tabla (tras haberla visto) → LIMPIEZA_TAPETE
+  tolerancia_reposo: 3.0        # grados para considerar que ya está en reposo
+
+barridos:
+  paso_px: 30.0                 # separación entre pasadas del zigzag
+  margen_px: 10.0               # margen hacia dentro desde el borde
+  # Se suma a la postura de la matriz (que es la de la broca apoyada) para barrer a altura fija. MEDIR (signo y valor)
+  offset_tabla: [0.0, -8.0, 4.0, 0.0, 0.0, 0.0]
+  offset_tapete: [0.0, -6.0, 3.0, 0.0, 0.0, 0.0]
+  velocidad: 20.0               # unidades/s por articulación
+  aceleracion: 120.0            # °/s²
+
+velocidad_max: 60.0             # °/s por articulación en todas las órdenes (o una lista de 6)
+movimiento_fijo: 30.0           # °/s pico de los movimientos fijos (a reposo, a despierto)
+wrist_roll_fijo: null           # null = como en el dataset/matriz; un número = se fuerza siempre
+pinza_fija: null                # ídem para la pinza
+hz: 30.0
+
+# Visión del producto (garbi/producto/vision.py): solo lo que cambie respecto a POR_DEFECTO de ese módulo.
+# Secciones: circulo (detector, morado HSV, área, circularidad, tol_quieto_px...), manos, agarre, tabla.
+vision:
+  circulo:
+    morado: {bajo: [155, 99, 50], alto: [179, 255, 255]}   # HSV del equipo (plana/config.json)
+    area: [500, 50000]
+    circularidad_min: 0.6        # el detector del equipo no filtra por forma: se relaja
+    solidez_min: 0.75
+
+# Esquinas del tapete en la cámara de arriba (px): las usan la visión y el barrido del tapete.
+# MEDIR con python -m garbi.producto.vision --marcar-tapete --camara 0 (reescribe esta línea)
+# PROVISIONAL: la zona del equipo (plana/zona.json). Marcar el tapete de verdad con la herramienta.
+tapete_px: [[41.6, 47.1], [566.7, 66.3], [580.3, 299.2], [57.0, 304.4]]

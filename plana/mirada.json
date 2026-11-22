@@ -1,0 +1,24 @@
+{
+  "descripcion": "Calibración de wrist_flex para que cámara gripper apunte a broca",
+  "valores": {
+    "v_0.0": {
+      "wrist_flex": 90.0,
+      "shoulder_pan_ajuste": 0.0,
+      "descripcion": "Fila frontal"
+    },
+    "v_0.5": {
+      "wrist_flex": 90.0,
+      "shoulder_pan_ajuste": 0.0,
+      "descripcion": "Fila media"
+    },
+    "v_1.0": {
+      "wrist_flex": 90.0,
+      "shoulder_pan_ajuste": 0.0,
+      "descripcion": "Fila trasera"
+    }
+  },
+  "metadata": {
+    "fecha_calibracion": null,
+    "notas": "Usar afinar_mirada.py --real para calibrar. Valores iniciales son placeholder (90°)."
+  }
+}

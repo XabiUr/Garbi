@@ -1,0 +1,167 @@
+{
+  "tcp": [
+    0.004,
+    0.002,
+    -0.145
+  ],
+  "desfases": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "pivote": [
+    {
+      "shoulder_pan.pos": -0.03677822728944591,
+      "shoulder_lift.pos": 50.465002447381295,
+      "elbow_flex.pos": -1.3431013431013383,
+      "wrist_flex.pos": -49.84841922910351,
+      "wrist_roll.pos": -1.203558346415491,
+      "gripper.pos": 0.0
+    }
+  ],
+  "toques": [
+    {
+      "px": [
+        248.0,
+        129.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": -13.93894814269953,
+        "shoulder_lift.pos": 76.70093000489476,
+        "elbow_flex.pos": -73.47985347985347,
+        "wrist_flex.pos": 66.47899523603292,
+        "wrist_roll.pos": -1.098901098901095,
+        "gripper.pos": 0.0
+      }
+    },
+    {
+      "px": [
+        287.0,
+        123.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": -9.304891504229502,
+        "shoulder_lift.pos": 75.77092511013214,
+        "elbow_flex.pos": -70.4029304029304,
+        "wrist_flex.pos": 61.628410567345185,
+        "wrist_roll.pos": -0.8372579801151261,
+        "gripper.pos": 0.0
+      }
+    },
+    {
+      "px": [
+        404.0,
+        136.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": 4.008826774549462,
+        "shoulder_lift.pos": 74.74302496328929,
+        "elbow_flex.pos": -70.4029304029304,
+        "wrist_flex.pos": 61.628410567345185,
+        "wrist_roll.pos": -1.1512297226583001,
+        "gripper.pos": 0.0
+      }
+    },
+    {
+      "px": [
+        315.0,
+        145.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": -5.553512320706147,
+        "shoulder_lift.pos": 72.88301517376408,
+        "elbow_flex.pos": -67.08180708180709,
+        "wrist_flex.pos": 62.58120398440883,
+        "wrist_roll.pos": -1.1512297226583001,
+        "gripper.pos": 0.0
+      }
+    },
+    {
+      "px": [
+        410.0,
+        157.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": 5.700625229863917,
+        "shoulder_lift.pos": 72.83406754772395,
+        "elbow_flex.pos": -67.13064713064713,
+        "wrist_flex.pos": 61.7150281507146,
+        "wrist_roll.pos": -1.203558346415491,
+        "gripper.pos": 0.0
+      }
+    },
+    {
+      "px": [
+        424.0,
+        223.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": 10.84957705038616,
+        "shoulder_lift.pos": 61.23348017621146,
+        "elbow_flex.pos": -52.185592185592185,
+        "wrist_flex.pos": 62.23473365093113,
+        "wrist_roll.pos": -0.6279434850863481,
+        "gripper.pos": 0.0
+      }
+    },
+    {
+      "px": [
+        219.0,
+        219.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": -21.000367782272903,
+        "shoulder_lift.pos": 60.54821341164953,
+        "elbow_flex.pos": -51.6971916971917,
+        "wrist_flex.pos": 61.888263317453465,
+        "wrist_roll.pos": -1.255886970172682,
+        "gripper.pos": 0.0
+      }
+    },
+    {
+      "px": [
+        159.0,
+        77.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": -21.515262964325117,
+        "shoulder_lift.pos": 92.16837983357806,
+        "elbow_flex.pos": -91.06227106227107,
+        "wrist_flex.pos": 51.667388479861415,
+        "wrist_roll.pos": -0.523286237571952,
+        "gripper.pos": 0.0
+      }
+    },
+    {
+      "px": [
+        467.0,
+        75.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": 7.465980139757249,
+        "shoulder_lift.pos": 93.04943710230054,
+        "elbow_flex.pos": -91.11111111111111,
+        "wrist_flex.pos": 50.45474231268946,
+        "wrist_roll.pos": -0.6802721088435391,
+        "gripper.pos": 0.0
+      }
+    },
+    {
+      "px": [
+        330.0,
+        87.0
+      ],
+      "postura": {
+        "shoulder_pan.pos": -5.553512320706147,
+        "shoulder_lift.pos": 75.37934410181106,
+        "elbow_flex.pos": -54.72527472527472,
+        "wrist_flex.pos": 17.626678215677785,
+        "wrist_roll.pos": -1.3605442176870781,
+        "gripper.pos": 0.0
+      }
+    }
+  ],
+  "fecha": "2026-11-22 01:47:33"
+}

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0e13">
+  <title>LeWelder · Prueba de voz</title>
+  <link rel="icon" href="icono.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="voz.css">
+  <style>
+    /* Solo para esta página de prueba: la tablet de verdad integra el componente en su propio diseño. */
+    :root {
+      --fondo: #0b0e13; --panel: #131820; --panel-2: #1a212c; --borde: #263040; --texto: #eef2f8;
+      --suave: #93a0b3; --acento: #ff7a1a; --verde: #3ddc84;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--fondo); color: var(--texto);
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      display: grid; grid-template-columns: minmax(340px, 500px) minmax(260px, 380px); gap: 24px;
+      justify-content: center; align-content: center; padding: 24px 16px;
+    }
+    @media (max-width: 760px) { body { grid-template-columns: 1fr; } }
+    h1 { grid-column: 1 / -1; margin: 0; font-size: 22px; font-weight: 800; }
+    h1 span { color: var(--suave); font-weight: 600; font-size: 15px; margin-left: 8px; }
+    #voz .vz { min-height: 560px; }
+    .lado { display: flex; flex-direction: column; gap: 14px; }
+    .caja { background: var(--panel); border: 1px solid var(--borde); border-radius: 14px; padding: 14px 16px; }
+    .etiqueta { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--suave); font-weight: 700; }
+    .fila { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    select, .ejemplo {
+      background: var(--panel-2); color: var(--texto); border: 1px solid var(--borde); border-radius: 10px;
+      font: 600 15px inherit; padding: 8px 10px; min-height: 40px;
+    }
+    .ejemplo { cursor: pointer; font-family: inherit; }
+    label { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+    #registro { list-style: none; margin: 8px 0 0; padding: 0; font: 14px ui-monospace, Menlo, monospace; color: #c9d3e0; }
+    #registro li { padding: 4px 0; border-bottom: 1px solid #1e2632; }
+    #registro li.ok { color: var(--verde); }
+  </style>
+</head>
+<body>
+  <h1>Voz → orden <span>prueba aislada del componente (web/voz.js)</span></h1>
+  <div id="voz"></div>
+  <div class="lado">
+    <div class="caja">
+      <div class="etiqueta">Contexto del taller</div>
+      <div class="fila">
+        <label>Junta montada
+          <select id="junta">
+            <option value="">ninguna</option>
+            <option value="t">T</option>
+            <option value="esquina">esquina</option>
+            <option value="incompleta">incompleta</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="ocupado"> robot ocupado</label>
+      </div>
+    </div>
+    <div class="caja">
+      <div class="etiqueta">Frases de ejemplo</div>
+      <div class="fila" id="ejemplos"></div>
+    </div>
+    <div class="caja">
+      <div class="etiqueta">Órdenes confirmadas</div>
+      <ul id="registro"></ul>
+    </div>
+  </div>
+
+  <script type="module">
+    import { crearComponenteVoz } from "./voz.js";
+
+    const $ = (id) => document.getElementById(id);
+    const registro = (texto, clase = "") => {
+      const li = document.createElement("li");
+      li.textContent = texto;
+      li.className = clase;
+      $("registro").prepend(li);
+    };
+    const voz = crearComponenteVoz($("voz"), {
+      contexto: () => ({ junta_montada: $("junta").value || null, robot_ocupado: $("ocupado").checked }),
+      alConfirmar: (i) => registro(`✔ ${i.orden}`, "ok"),
+      alCancelar: (i) => registro(`✘ ${i.orden || i.texto}`),
+    });
+    window.componenteVoz = voz;  // para las pruebas con Playwright
+
+    const EJEMPLOS = ["móntame una esquina", "pon la té", "¿dónde se suelda?", "suelda tú", "recoge",
+                      "dame la antorcha", "monta", "¿qué tiempo hace?"];
+    for (const texto of EJEMPLOS) {
+      const b = document.createElement("button");
+      b.className = "ejemplo";
+      b.textContent = texto;
+      b.onclick = () => voz.enviarTexto(texto);
+      $("ejemplos").append(b);
+    }
+  </script>
+</body>
+</html>

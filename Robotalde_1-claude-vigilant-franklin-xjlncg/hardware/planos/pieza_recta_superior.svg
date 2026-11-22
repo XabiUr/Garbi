@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="250.00mm" height="170.00mm" viewBox="0 0 250.000 170.000">
+<rect x="0" y="0" width="250.000" height="170.000" fill="#ffffff"/>
+<polygon points="28.000,148.900 196.000,148.900 196.000,63.100 184.000,51.100 28.000,51.100" fill="#f5f5f5" stroke="#000000" stroke-width="0.350"/>
+<polygon points="28.000,100.900 196.000,100.900 196.000,99.100 28.000,99.100" fill="#bdbdbd" stroke="#000000" stroke-width="0.200"/>
+<circle cx="52.000" cy="124.900" r="6.000" fill="none" stroke="#757575" stroke-width="0.200" stroke-dasharray="1.00 0.60"/>
+<circle cx="52.000" cy="75.100" r="6.000" fill="none" stroke="#757575" stroke-width="0.200" stroke-dasharray="1.00 0.60"/>
+<circle cx="172.000" cy="124.900" r="6.000" fill="none" stroke="#757575" stroke-width="0.200" stroke-dasharray="1.00 0.60"/>
+<circle cx="172.000" cy="75.100" r="6.000" fill="none" stroke="#757575" stroke-width="0.200" stroke-dasharray="1.00 0.60"/>
+<polygon points="91.000,145.900 133.000,145.900 133.000,103.900 91.000,103.900" fill="#ffffff" stroke="#757575" stroke-width="0.150" stroke-dasharray="1.00 0.70"/>
+<polygon points="97.000,114.900 102.000,114.900 102.000,109.900 97.000,109.900" fill="#000000"/>
+<polygon points="102.000,114.900 107.000,114.900 107.000,109.900 102.000,109.900" fill="#000000"/>
+<polygon points="107.000,114.900 112.000,114.900 112.000,109.900 107.000,109.900" fill="#000000"/>
+<polygon points="112.000,114.900 117.000,114.900 117.000,109.900 112.000,109.900" fill="#000000"/>
+<polygon points="117.000,114.900 122.000,114.900 122.000,109.900 117.000,109.900" fill="#000000"/>
+<polygon points="122.000,114.900 127.000,114.900 127.000,109.900 122.000,109.900" fill="#000000"/>
+<polygon points="97.000,119.900 102.000,119.900 102.000,114.900 97.000,114.900" fill="#000000"/>
+<polygon points="122.000,119.900 127.000,119.900 127.000,114.900 122.000,114.900" fill="#000000"/>
+<polygon points="97.000,124.900 102.000,124.900 102.000,119.900 97.000,119.900" fill="#000000"/>
+<polygon points="107.000,124.900 112.000,124.900 112.000,119.900 107.000,119.900" fill="#000000"/>
+<polygon points="112.000,124.900 117.000,124.900 117.000,119.900 112.000,119.900" fill="#000000"/>
+<polygon points="122.000,124.900 127.000,124.900 127.000,119.900 122.000,119.900" fill="#000000"/>
+<polygon points="97.000,129.900 102.000,129.900 102.000,124.900 97.000,124.900" fill="#000000"/>
+<polygon points="107.000,129.900 112.000,129.900 112.000,124.900 107.000,124.900" fill="#000000"/>
+<polygon points="112.000,129.900 117.000,129.900 117.000,124.900 112.000,124.900" fill="#000000"/>
+<polygon points="122.000,129.900 127.000,129.900 127.000,124.900 122.000,124.900" fill="#000000"/>
+<polygon points="97.000,134.900 102.000,134.900 102.000,129.900 97.000,129.900" fill="#000000"/>
+<polygon points="102.000,134.900 107.000,134.900 107.000,129.900 102.000,129.900" fill="#000000"/>
+<polygon points="107.000,134.900 112.000,134.900 112.000,129.900 107.000,129.900" fill="#000000"/>
+<polygon points="112.000,134.900 117.000,134.900 117.000,129.900 112.000,129.900" fill="#000000"/>
+<polygon points="122.000,134.900 127.000,134.900 127.000,129.900 122.000,129.900" fill="#000000"/>
+<polygon points="97.000,139.900 102.000,139.900 102.000,134.900 97.000,134.900" fill="#000000"/>
+<polygon points="102.000,139.900 107.000,139.900 107.000,134.900 102.000,134.900" fill="#000000"/>
+<polygon points="107.000,139.900 112.000,139.900 112.000,134.900 107.000,134.900" fill="#000000"/>
+<polygon points="112.000,139.900 117.000,139.900 117.000,134.900 112.000,134.900" fill="#000000"/>
+<polygon points="117.000,139.900 122.000,139.900 122.000,134.900 117.000,134.900" fill="#000000"/>
+<polygon points="122.000,139.900 127.000,139.900 127.000,134.900 122.000,134.900" fill="#000000"/>
+<polyline points="40.000,100.000 184.000,100.000" fill="none" stroke="#c62828" stroke-width="0.600"/>
+<polygon points="184.000,100.000 181.000,101.050 181.000,98.950" fill="#c62828"/>
+<circle cx="40.000" cy="100.000" r="1.440" fill="#c62828"/>
+<polyline points="40.000,100.000 40.000,73.600" fill="none" stroke="#2e7d32" stroke-width="0.400"/>
+<polygon points="40.000,73.600 40.700,75.600 39.300,75.600" fill="#2e7d32"/>
+<text x="42.400" y="78.400" font-size="2.600" fill="#2e7d32" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">+Y</text>
+<text x="112.000" y="97.360" font-size="2.600" fill="#c62828" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">cordón (X de la pieza, sentido de avance)</text>
+<text x="37.600" y="104.800" font-size="2.400" fill="#c62828" text-anchor="end" font-family="Liberation Sans, Arial, Helvetica, sans-serif">origen (0, 0, 0)</text>
+<polyline points="28.000,51.900 28.000,66.300" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="196.000,51.900 196.000,66.300" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="28.000,65.100 196.000,65.100" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="28.000,65.100 29.600,64.540 29.600,65.660" fill="#1565c0"/>
+<polygon points="196.000,65.100 194.400,65.660 194.400,64.540" fill="#1565c0"/>
+<text x="112.000" y="68.500" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">140</text>
+<polyline points="40.000,51.900 40.000,59.300" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="184.000,51.900 184.000,59.300" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="40.000,58.100 184.000,58.100" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="40.000,58.100 41.600,57.540 41.600,58.660" fill="#1565c0"/>
+<polygon points="184.000,58.100 182.400,58.660 182.400,57.540" fill="#1565c0"/>
+<text x="112.000" y="61.500" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">cordón 120</text>
+<polyline points="28.000,148.100 28.000,140.700" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="40.000,148.100 40.000,140.700" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="28.000,141.900 40.000,141.900" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="28.000,141.900 29.600,141.340 29.600,142.460" fill="#1565c0"/>
+<polygon points="40.000,141.900 38.400,142.460 38.400,141.340" fill="#1565c0"/>
+<text x="34.000" y="140.800" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">10</text>
+<polyline points="27.200,148.900 16.800,148.900" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="27.200,51.100 16.800,51.100" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="18.000,148.900 18.000,51.100" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="18.000,148.900 17.440,147.300 18.560,147.300" fill="#1565c0"/>
+<polygon points="18.000,51.100 18.560,52.700 17.440,52.700" fill="#1565c0"/>
+<text x="16.570" y="100.000" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 16.570 100.000)">81,5</text>
+<polyline points="196.800,99.100 201.200,99.100" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="196.800,63.100 201.200,63.100" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="200.000,99.100 200.000,63.100" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="200.000,99.100 199.440,97.500 200.560,97.500" fill="#1565c0"/>
+<polygon points="200.000,63.100 200.560,64.700 199.440,64.700" fill="#1565c0"/>
+<text x="203.510" y="81.100" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 203.510 81.100)">30</text>
+<text x="199.600" y="101.200" font-size="2.400" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">junta 1,5 × 3 prof.</text>
+<polyline points="40.000,148.100 40.000,133.700" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="112.000,148.100 112.000,133.700" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="40.000,134.900 112.000,134.900" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="40.000,134.900 41.600,134.340 41.600,135.460" fill="#1565c0"/>
+<polygon points="112.000,134.900 110.400,135.460 110.400,134.340" fill="#1565c0"/>
+<text x="76.000" y="133.800" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">ArUco X = 60</text>
+<polyline points="97.000,139.100 97.000,133.700" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="127.000,139.100 127.000,133.700" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="97.000,134.900 127.000,134.900" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="97.000,134.900 98.600,134.340 98.600,135.460" fill="#1565c0"/>
+<polygon points="127.000,134.900 125.400,135.460 125.400,134.340" fill="#1565c0"/>
+<text x="112.000" y="133.800" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">25</text>
+<polyline points="133.800,100.000 142.200,100.000" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="133.800,124.900 142.200,124.900" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="141.000,100.000 141.000,124.900" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="141.000,100.000 141.560,101.600 140.440,101.600" fill="#1565c0"/>
+<polygon points="141.000,124.900 140.440,123.300 141.560,123.300" fill="#1565c0"/>
+<text x="141.390" y="112.450" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 141.390 112.450)">Y = -20,75</text>
+<polyline points="52.800,148.900 59.200,148.900" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="52.800,124.900 59.200,124.900" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="58.000,148.900 58.000,124.900" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="58.000,148.900 57.440,147.300 58.560,147.300" fill="#1565c0"/>
+<polygon points="58.000,124.900 58.560,126.500 57.440,126.500" fill="#1565c0"/>
+<text x="61.510" y="136.900" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 61.510 136.900)">20,75</text>
+<text x="52.000" y="133.900" font-size="2.200" fill="#757575" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">imán Ø10 (abajo)</text>
+<polyline points="183.434,51.666 181.030,54.070" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="195.434,63.666 193.030,66.070" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="181.879,53.221 193.879,65.221" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="181.879,53.221 183.406,53.957 182.614,54.749" fill="#1565c0"/>
+<polygon points="193.879,65.221 192.351,64.486 193.143,63.694" fill="#1565c0"/>
+<text x="187.313" y="62.387" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">chaflán 10×45°</text>
+<text x="8.000" y="10.000" font-size="5.000" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-weight="bold">Pieza unión a tope recta</text>
+<text x="8.000" y="16.000" font-size="3.000" fill="#333333" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Vista superior en el marco de la pieza (mm). Z = 0 en la cara superior de la chapas; grosor 6.</text>
+<text x="8.000" y="20.200" font-size="3.000" fill="#333333" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">ArUco id 10 dibujado tal cual se pega (lado 25 + margen blanco hasta 35). Imanes: X = 10, 110, Y = ±20,75, cara inferior.</text>
+</svg>

@@ -1,0 +1,27 @@
+{
+  "esquinas_px": [
+    [
+      132.0,
+      44.0
+    ],
+    [
+      507.0,
+      44.0
+    ],
+    [
+      510.0,
+      261.0
+    ],
+    [
+      132.0,
+      259.0
+    ]
+  ],
+  "orden": "delante-izq, delante-der, detras-der, detras-izq",
+  "rejilla": {
+    "n_u": 5,
+    "n_v": 3
+  },
+  "nota": "\u00c1rea de la mesa para el barrido (plano de la mesa, sin paralaje)",
+  "fecha": "2026-11-22 02:12:24"
+}

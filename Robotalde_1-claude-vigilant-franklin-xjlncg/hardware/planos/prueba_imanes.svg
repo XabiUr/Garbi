@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200.00mm" height="120.00mm" viewBox="0 0 200.000 120.000">
+<rect x="0" y="0" width="200.000" height="120.000" fill="#ffffff"/>
+<polygon points="25.000,85.000 145.000,85.000 145.000,41.000 25.000,41.000" fill="#eeeeee" stroke="#000000" stroke-width="0.350"/>
+<circle cx="49.000" cy="59.000" r="10.200" fill="#ffffff" stroke="#000000" stroke-width="0.250"/>
+<text x="49.000" y="80.000" font-size="3.200" fill="#000000" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">10,2</text>
+<circle cx="85.000" cy="59.000" r="10.400" fill="#ffffff" stroke="#000000" stroke-width="0.250"/>
+<text x="85.000" y="80.000" font-size="3.200" fill="#000000" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">10,4</text>
+<circle cx="121.000" cy="59.000" r="10.600" fill="#ffffff" stroke="#000000" stroke-width="0.250"/>
+<text x="121.000" y="80.000" font-size="3.200" fill="#000000" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">10,6</text>
+<polyline points="25.000,84.200 25.000,75.800" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="145.000,84.200 145.000,75.800" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="25.000,77.000 145.000,77.000" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="25.000,77.000 26.600,76.440 26.600,77.560" fill="#1565c0"/>
+<polygon points="145.000,77.000 143.400,77.560 143.400,76.440" fill="#1565c0"/>
+<text x="85.000" y="75.900" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">60</text>
+<polyline points="24.200,85.000 15.800,85.000" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="24.200,41.000 15.800,41.000" fill="none" stroke="#1565c0" stroke-width="0.150"/>
+<polyline points="17.000,85.000 17.000,41.000" fill="none" stroke="#1565c0" stroke-width="0.200"/>
+<polygon points="17.000,85.000 16.440,83.400 17.560,83.400" fill="#1565c0"/>
+<polygon points="17.000,41.000 17.560,42.600 16.440,42.600" fill="#1565c0"/>
+<text x="15.570" y="63.000" font-size="2.600" fill="#1565c0" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif" transform="rotate(-90 15.570 63.000)">22</text>
+<text x="25.000" y="117.000" font-size="2.800" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Placa de 60 × 22 × 6 mm. Agujeros ciegos de 3,2 mm de profundidad (imán de 10×3).</text>
+<text x="25.000" y="126.000" font-size="2.800" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Números grabados 0,4 mm. Imprímela con la cara de los agujeros arriba y la misma configuración que las piezas.</text>
+<polygon points="165.000,85.000 189.000,85.000 189.000,41.000 165.000,41.000" fill="#efebe9" stroke="#000000" stroke-width="0.300"/>
+<polygon points="169.000,77.000 185.000,77.000 185.000,41.000 169.000,41.000" fill="#ffffff" stroke="#000000" stroke-width="0.250"/>
+<text x="177.000" y="83.000" font-size="2.600" fill="#000000" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">0,2</text>
+<polygon points="193.000,85.000 217.000,85.000 217.000,41.000 193.000,41.000" fill="#efebe9" stroke="#000000" stroke-width="0.300"/>
+<polygon points="197.000,77.000 213.000,77.000 213.000,41.000 197.000,41.000" fill="#ffffff" stroke="#000000" stroke-width="0.250"/>
+<text x="205.000" y="83.000" font-size="2.600" fill="#000000" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">0,3</text>
+<polygon points="221.000,85.000 245.000,85.000 245.000,41.000 221.000,41.000" fill="#efebe9" stroke="#000000" stroke-width="0.300"/>
+<polygon points="225.000,77.000 241.000,77.000 241.000,41.000 225.000,41.000" fill="#ffffff" stroke="#000000" stroke-width="0.250"/>
+<text x="233.000" y="83.000" font-size="2.600" fill="#000000" text-anchor="middle" font-family="Liberation Sans, Arial, Helvetica, sans-serif">0,4</text>
+<text x="165.000" y="117.000" font-size="2.800" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Ranuras de 8 + 2×holgura para un taco de 8,0 mm:</text>
+<text x="165.000" y="126.000" font-size="2.800" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">elige la holgura de los topes de la loseta.</text>
+<text x="8.000" y="10.000" font-size="5.000" fill="#000000" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-weight="bold">Piezas de prueba: imanes y encaje</text>
+<text x="8.000" y="16.000" font-size="3.000" fill="#333333" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Diámetros de agujero a probar (contrato): 10,2, 10,4, 10,6 mm. El imán debe entrar a presión con el pulgar y no caerse boca abajo.</text>
+<text x="8.000" y="20.200" font-size="3.000" fill="#333333" text-anchor="start" font-family="Liberation Sans, Arial, Helvetica, sans-serif">Si todos quedan flojos o duros, anota cuál y ajusta el resto de agujeros con ese valor.</text>
+</svg>

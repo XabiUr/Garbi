@@ -1,0 +1,129 @@
+{
+  "rejilla": {
+    "n_u": 5,
+    "n_v": 3
+  },
+  "posturas": {
+    "0,0": {
+      "shoulder_pan.pos": -23.942625965428462,
+      "shoulder_lift.pos": 90.35731767009301,
+      "elbow_flex.pos": -82.22222222222223,
+      "wrist_flex.pos": 27.154612386314426,
+      "wrist_roll.pos": -8.215593929879645,
+      "gripper.pos": 0.0
+    },
+    "1,0": {
+      "shoulder_pan.pos": -16.80764987127621,
+      "shoulder_lift.pos": 89.86784140969164,
+      "elbow_flex.pos": -82.27106227106228,
+      "wrist_flex.pos": 35.72975313988741,
+      "wrist_roll.pos": -8.58189429618001,
+      "gripper.pos": 0.0
+    },
+    "1,1": {
+      "shoulder_pan.pos": -18.86723059948511,
+      "shoulder_lift.pos": 66.42192853646597,
+      "elbow_flex.pos": -45.64102564102564,
+      "wrist_flex.pos": 15.114768297964474,
+      "wrist_roll.pos": -20.879120879120876,
+      "gripper.pos": 0.0
+    },
+    "0,1": {
+      "shoulder_pan.pos": -27.47333578521514,
+      "shoulder_lift.pos": 70.3866862457171,
+      "elbow_flex.pos": -47.49694749694749,
+      "wrist_flex.pos": 11.650064963187518,
+      "wrist_roll.pos": -3.4536891679748862,
+      "gripper.pos": 0.0
+    },
+    "2,0": {
+      "shoulder_pan.pos": -5.406399411548364,
+      "shoulder_lift.pos": 88.25256975036712,
+      "elbow_flex.pos": -76.75213675213675,
+      "wrist_flex.pos": 31.225638804677345,
+      "wrist_roll.pos": 6.1747776033490425,
+      "gripper.pos": 0.0
+    },
+    "3,0": {
+      "shoulder_pan.pos": 3.5674880470761394,
+      "shoulder_lift.pos": 89.76994615761134,
+      "elbow_flex.pos": -77.28937728937728,
+      "wrist_flex.pos": 12.776093546990026,
+      "wrist_roll.pos": -38.30455259026687,
+      "gripper.pos": 0.0
+    },
+    "2,1": {
+      "shoulder_pan.pos": -4.817947774917258,
+      "shoulder_lift.pos": 67.54772393538912,
+      "elbow_flex.pos": -50.67155067155067,
+      "wrist_flex.pos": 18.839324382849725,
+      "wrist_roll.pos": -38.40920983778127,
+      "gripper.pos": 0.0
+    },
+    "3,1": {
+      "shoulder_pan.pos": 4.082383229128354,
+      "shoulder_lift.pos": 67.20509055310816,
+      "elbow_flex.pos": -44.85958485958486,
+      "wrist_flex.pos": 4.2875703767864906,
+      "wrist_roll.pos": -24.80376766091051,
+      "gripper.pos": 0.0
+    },
+    "4,0": {
+      "shoulder_pan.pos": 12.467819051121737,
+      "shoulder_lift.pos": 95.54576603034752,
+      "elbow_flex.pos": -86.17826617826617,
+      "wrist_flex.pos": 13.555651797314866,
+      "wrist_roll.pos": -40.45002616431188,
+      "gripper.pos": 0.0
+    },
+    "4,1": {
+      "shoulder_pan.pos": 16.219198234645077,
+      "shoulder_lift.pos": 77.77777777777777,
+      "elbow_flex.pos": -66.00732600732601,
+      "wrist_flex.pos": 20.83152880034646,
+      "wrist_roll.pos": -40.50235478806907,
+      "gripper.pos": 0.2734107997265892
+    },
+    "4,2": {
+      "shoulder_pan.pos": 21.294593600588456,
+      "shoulder_lift.pos": 56.38766519823787,
+      "elbow_flex.pos": -43.2967032967033,
+      "wrist_flex.pos": 32.784755305326996,
+      "wrist_roll.pos": -39.03715332286761,
+      "gripper.pos": 0.2050580997949419
+    },
+    "3,2": {
+      "shoulder_pan.pos": 8.49577050386172,
+      "shoulder_lift.pos": 50.07342143906018,
+      "elbow_flex.pos": -35.97069597069597,
+      "wrist_flex.pos": 40.14724989172802,
+      "wrist_roll.pos": -20.19884877027735,
+      "gripper.pos": 0.0
+    },
+    "2,2": {
+      "shoulder_pan.pos": -2.61125413755056,
+      "shoulder_lift.pos": 46.20655898188937,
+      "elbow_flex.pos": -35.28693528693529,
+      "wrist_flex.pos": 42.48592464270246,
+      "wrist_roll.pos": -38.147566718995286,
+      "gripper.pos": 0.0
+    },
+    "1,2": {
+      "shoulder_pan.pos": -21.58881941890401,
+      "shoulder_lift.pos": 53.20606950562899,
+      "elbow_flex.pos": -46.42246642246642,
+      "wrist_flex.pos": 65.43958423559982,
+      "wrist_roll.pos": -14.442700156985865,
+      "gripper.pos": 0.0
+    },
+    "0,2": {
+      "shoulder_pan.pos": -34.31408606105187,
+      "shoulder_lift.pos": 57.41556534508078,
+      "elbow_flex.pos": -48.27838827838827,
+      "wrist_flex.pos": 69.33737548722391,
+      "wrist_roll.pos": 16.01255886970172,
+      "gripper.pos": 0.0
+    }
+  },
+  "nota": "Postura de la boquilla sobre cada punto de la rejilla de mesa.json. Clave 'i,j': i = columna (u), j = fila (v), desde la esquina 1."
+}

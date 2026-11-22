@@ -1,0 +1,80 @@
+{
+  "robot": {
+    "type": "so_follower",
+    "id": "so100_follower",
+    "port": "/dev/tty.usbmodem5A7A0589611",
+    "use_degrees": false,
+    "cameras": {
+      "front": {
+        "type": "opencv",
+        "index_or_path": 1,
+        "width": 640,
+        "height": 360,
+        "fps": 30
+      },
+      "gripper": {
+        "type": "opencv",
+        "index_or_path": 0,
+        "width": 640,
+        "height": 480,
+        "fps": 30
+      }
+    }
+  },
+  "teleop": {
+    "type": "so_leader",
+    "id": "so100_leader",
+    "port": "/dev/tty.usbmodem5AB01797841"
+  },
+  "percepcion": {
+    "hsv_morado": {
+      "min": [
+        155,
+        99,
+        50
+      ],
+      "max": [
+        179,
+        255,
+        255
+      ]
+    },
+    "area_minima_px": 500,
+    "area_maxima_px": 50000,
+    "suavizado_alpha": 0.3,
+    "timeout_perdida_s": 1.0,
+    "tiempo_estable_s": 0.5,
+    "margen_zona": 0.15
+  },
+  "seguridad": {
+    "margen_limites": 0.05,
+    "paso_maximo_por_ciclo": 1.5,
+    "velocidad_aproximacion": 2.0,
+    "velocidad_reposo": 0.8,
+    "offset_z_seguridad": 0.08,
+    "offset_bajar_altura": -8.0,
+    "offset_distancia_morado": 2.3,
+    "offset_distancia_aproximacion": 12.0,
+    "offset_bajar_muneca": 10.0,
+    "offset_aproximacion_altura": -30.0,
+    "offset_lateral_bajada": -3.0,
+    "offset_acercar_bajada": -4.0,
+    "offset_bajar_objetivo": 5.0,
+    "offset_acercar_objetivo": -3.0
+  },
+  "supervisor": {
+    "fps": 30,
+    "timeout_sin_morado_s": 1.5,
+    "cerebro_default": "zonas"
+  },
+  "dataset": {
+    "fps": 30,
+    "repo_base": "Xaflas",
+    "duracion_reposo_inicial_s": 1.0,
+    "duracion_reposo_final_s": 1.0,
+    "duracion_quieto_en_objetivo_s": 1.5
+  },
+  "huggingface": {
+    "user": "Xaflas"
+  }
+}

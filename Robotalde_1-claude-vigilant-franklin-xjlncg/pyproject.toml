@@ -1,0 +1,27 @@
+[project]
+name = "lewelder"
+version = "0.1.0"
+description = "LeWelder: escuela de soldadura aumentada con SO-101 (equipo Robotalde)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "lerobot[smolvla,feetech,dataset,training,core-scripts,evaluation,remote,kinematics,av-dep]==0.7.0",
+    "mujoco>=4.0",
+    "opencv-contrib-python>=4.10",
+    "pyserial>=3.5",
+    "websockets>=13",
+    "aiohttp>=3.10",
+    "anthropic>=0.40",
+    "pillow",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio", "playwright"]
+manos = ["mediapipe"]
+app = ["pynput>=1.7"]   # seta de emergencia global (barra espaciadora fuera del navegador)
+
+[tool.setuptools.packages.find]
+include = ["lewelder*", "sim*", "robot*", "garbi*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

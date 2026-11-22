@@ -1,0 +1,260 @@
+/* LeWelder · tablet del taller. Modo oscuro, legible a 1-2 m, táctil. Pensado para 1280x800 y portátiles. */
+:root {
+  --fondo: #0b0e13;
+  --panel: #131820;
+  --panel-2: #1a212c;
+  --borde: #263040;
+  --texto: #eef2f8;
+  --suave: #93a0b3;
+  --tenue: #5d6879;
+  --verde: #3ddc84;
+  --ambar: #ffb020;
+  --rojo: #ff4d4f;
+  --cian: #38bdf8;
+  --acento: #ff7a1a;
+  --oro: #e8c27a;
+  --radio: 14px;
+  --fuente: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--fuente);
+  display: grid;
+  grid-template-rows: 64px 1fr 104px;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] { display: none !important; }
+.etiqueta {
+  font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--suave); font-weight: 600;
+}
+
+/* --- cabecera ------------------------------------------------------------------------------------------- */
+.cabecera {
+  display: flex; align-items: center; gap: 22px; padding: 0 20px;
+  border-bottom: 1px solid var(--borde);
+  background: linear-gradient(180deg, #121722, #0e1219);
+}
+.marca { display: flex; align-items: center; gap: 10px; flex: none; white-space: nowrap; }
+.marca-icono { width: 38px; height: 38px; }
+.marca-nombre { font-size: 23px; font-weight: 800; letter-spacing: -.01em; }
+.marca-sub { font-size: 12px; color: var(--suave); }
+.modo {
+  flex: none; min-width: 196px; text-align: center;
+  font-size: 17px; font-weight: 700; padding: 8px 16px; border-radius: 999px;
+  background: var(--panel-2); border: 1px solid var(--borde); white-space: nowrap;
+}
+body[data-modo="examen"] .modo { background: rgba(255,122,26,.16); border-color: var(--acento); color: #ffc79b; }
+body[data-modo="nota"] .modo { background: rgba(56,189,248,.12); border-color: #2a6f93; color: #bfe8ff; }
+body[data-modo="repaso"] .modo, body[data-modo="maestro"] .modo { background: rgba(56,189,248,.18); border-color: var(--cian); color: #d4f1ff; }
+body[data-modo="certificado"] .modo { background: rgba(232,194,122,.16); border-color: var(--oro); color: #f6e2bb; }
+.modo::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--suave); margin-right: 9px; vertical-align: 1px; }
+body[data-modo="examen"] .modo::before { background: var(--acento); animation: latido 1s infinite; }
+body[data-modo="repaso"] .modo::before, body[data-modo="maestro"] .modo::before { background: var(--cian); animation: latido 1s infinite; }
+@keyframes latido { 50% { opacity: .25; } }
+.pieza { display: flex; flex-direction: column; gap: 2px; font-size: 16px; font-weight: 600; white-space: nowrap; flex: none; }
+.ajustes-sim { display: flex; gap: 10px; }
+.ajustes-sim label { display: flex; flex-direction: column; gap: 2px; }
+.ajustes-sim select {
+  background: var(--panel-2); color: var(--texto); border: 1px solid var(--borde); border-radius: 8px;
+  font: 600 14px var(--fuente); padding: 4px 6px; min-height: 30px;
+}
+.conexiones { margin-left: auto; display: flex; gap: 12px; font-size: 13px; color: var(--suave); white-space: nowrap; }
+.punto::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--tenue); margin-right: 6px; }
+.punto.ok::before { background: var(--verde); box-shadow: 0 0 8px var(--verde); }
+.punto.mal::before { background: var(--rojo); }
+
+/* --- principal ------------------------------------------------------------------------------------------ */
+.principal { display: grid; grid-template-columns: 1fr 384px; gap: 14px; padding: 14px 16px 0; min-height: 0; }
+.escena {
+  position: relative; min-height: 0; border-radius: var(--radio); overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 30%, #18202c 0%, #0c1016 70%);
+  border: 1px solid var(--borde);
+  display: grid; grid-template-rows: 1fr auto;
+}
+#lienzo { width: 100%; height: 100%; display: block; touch-action: none; min-height: 0; }
+.sin-conexion {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,77,79,.18); border: 1px solid var(--rojo); color: #ffd0d0;
+  padding: 8px 16px; border-radius: 10px; font-weight: 700;
+}
+.consejo {
+  position: absolute; left: 50%; transform: translateX(-50%); bottom: 118px;
+  background: rgba(11,14,19,.78); border: 1px solid var(--borde); color: var(--texto);
+  padding: 10px 18px; border-radius: 999px; font-size: 17px; font-weight: 600; white-space: nowrap;
+  backdrop-filter: blur(4px); pointer-events: none;
+}
+
+/* panel del robot */
+.panel-robot {
+  position: absolute; top: 14px; left: 14px; right: 14px;
+  background: rgba(10,18,28,.88); border: 1px solid #23597a; border-radius: 12px; padding: 10px 14px 14px 16px;
+  display: grid; grid-template-columns: 1fr auto; grid-template-areas: "orden pol" "led pol";
+  align-items: center; column-gap: 18px; row-gap: 4px; backdrop-filter: blur(6px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35); overflow: hidden;
+}
+.robot-orden { grid-area: orden; }
+.panel-robot .politicas { grid-area: pol; }
+.panel-robot .led-robot { grid-area: led; }
+.robot-titulo { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #8fd3f7; font-weight: 700; }
+.instruccion { font-family: var(--mono); font-size: 21px; color: #e6f6ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
+.led-robot { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--suave); }
+.led-bombilla { width: 16px; height: 16px; border-radius: 50%; background: #2a3342; border: 1px solid #3a4558; }
+.led-robot.encendido { color: #fff4c2; }
+.led-robot.encendido .led-bombilla { background: #fff6c8; border-color: #ffe27a; box-shadow: 0 0 14px 4px rgba(255,226,122,.85), 0 0 30px 8px rgba(56,189,248,.45); }
+.politicas, .niveles { display: flex; gap: 0; border: 1px solid var(--borde); border-radius: 10px; overflow: hidden; background: var(--panel); }
+.politicas button, .niveles button {
+  font: 700 17px var(--fuente); color: var(--suave); background: transparent; border: 0;
+  padding: 10px 18px; min-height: 44px; cursor: pointer; border-right: 1px solid var(--borde);
+}
+.politicas button:last-child, .niveles button:last-child { border-right: 0; }
+.panel-robot .politicas button { min-height: 58px; min-width: 84px; }
+.politicas button.activo { background: var(--cian); color: #04131d; }
+.politicas button.respaldo { box-shadow: inset 0 0 0 2px var(--ambar); color: #ffd68a; }
+.respaldo {
+  margin-left: 10px; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700;
+  color: #ffd68a; background: rgba(255,176,32,.14); border: 1px solid rgba(255,176,32,.55);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 420px;
+}
+.progreso { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: #1d2633; overflow: hidden; }
+.progreso-barra { height: 100%; width: 0; background: linear-gradient(90deg, #2aa0d8, var(--cian)); transition: width .15s linear; }
+
+/* vista del robot simulado (cámara cenital de MuJoCo) */
+.robot-vista {
+  position: absolute; right: 14px; top: 124px; width: 272px; margin: 0;
+  background: rgba(10,18,28,.9); border: 1px solid #23597a; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+.robot-vista img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #0c1016; }
+.robot-vista figcaption {
+  display: flex; align-items: center; gap: 7px; padding: 6px 10px;
+  font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #8fd3f7; font-weight: 700;
+}
+.robot-vista .vivo { width: 8px; height: 8px; border-radius: 50%; background: var(--cian); }
+body[data-modo="repaso"] .robot-vista .vivo, body[data-modo="maestro"] .robot-vista .vivo { animation: latido 1s infinite; }
+
+/* barra de tramos */
+.tramos-caja { padding: 10px 16px 12px; background: rgba(9,12,17,.72); border-top: 1px solid var(--borde); }
+.tramos-cabecera { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--suave); font-weight: 600; margin-bottom: 7px; }
+.leyenda { display: flex; align-items: center; gap: 6px; font-weight: 500; }
+.leyenda i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-left: 8px; }
+.l-bien { background: var(--verde); } .l-regular { background: var(--ambar); } .l-quemado { background: var(--rojo); }
+.l-hueco { background: repeating-linear-gradient(45deg, #ff4d4f 0 3px, #3a1416 3px 6px); }
+.l-robot { background: var(--cian); }
+.tramos { display: grid; grid-template-columns: repeat(24, 1fr); gap: 4px; height: 34px; }
+.tramo { border-radius: 5px; background: #222b38; position: relative; }
+.tramo.bien { background: var(--verde); }
+.tramo.regular { background: var(--ambar); }
+.tramo.quemado { background: var(--rojo); }
+.tramo.hueco { background: repeating-linear-gradient(45deg, #ff4d4f 0 5px, #3a1416 5px 10px); }
+.tramo.robot { background: var(--cian); box-shadow: 0 0 12px rgba(56,189,248,.7); }
+.tramo.pendiente-robot { background: repeating-linear-gradient(45deg, #2b6f93 0 5px, #14232f 5px 10px); }
+.tramo.punta::after { content: ""; position: absolute; inset: -4px; border: 2px solid #fff; border-radius: 7px; }
+.tramos-escala { display: flex; justify-content: space-between; font-size: 12px; color: var(--tenue); margin-top: 4px; font-family: var(--mono); }
+
+/* --- lateral -------------------------------------------------------------------------------------------- */
+.lateral { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.tarjeta { background: var(--panel); border: 1px solid var(--borde); border-radius: var(--radio); padding: 14px 18px; }
+.nota-tarjeta { padding: 14px 20px 12px; }
+.nota-cabecera { display: flex; justify-content: space-between; align-items: center; }
+.veredicto { font-size: 15px; font-weight: 800; padding: 4px 12px; border-radius: 999px; }
+.veredicto.aprobado { background: rgba(61,220,132,.15); color: var(--verde); border: 1px solid rgba(61,220,132,.5); }
+.veredicto.suspenso { background: rgba(255,77,79,.14); color: #ff8a8b; border: 1px solid rgba(255,77,79,.5); }
+.veredicto.provisional { background: var(--panel-2); color: var(--suave); border: 1px solid var(--borde); }
+.nota { display: flex; align-items: baseline; gap: 6px; line-height: 1; margin: 4px 0 6px; }
+#nota { font-size: 104px; font-weight: 800; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.nota-max { font-size: 30px; color: var(--tenue); font-weight: 700; }
+.nota-tarjeta.aprobado #nota { color: var(--verde); }
+.nota-tarjeta.suspenso #nota { color: #ff7072; }
+.nota-tarjeta.provisional #nota { color: #c7d0dc; }
+.nota-pie { font-size: 14px; color: var(--suave); }
+.metricas { display: grid; gap: 0; padding: 4px 18px; }
+.metrica { display: grid; grid-template-columns: 98px 1fr auto; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #1e2632; }
+.metrica:last-child { border-bottom: 0; }
+.m-nombre { font-size: 14px; color: var(--suave); font-weight: 600; }
+.m-palabra { font-size: 18px; font-weight: 700; }
+.m-valor { font-size: 16px; color: var(--suave); font-family: var(--mono); text-align: right; }
+.metrica.bien .m-palabra { color: var(--verde); }
+.metrica.regular .m-palabra { color: var(--ambar); }
+.metrica.mal .m-palabra { color: #ff7072; }
+.maestro-dice { border-color: #4a3a1e; background: linear-gradient(180deg, #19150e, #131820); }
+.maestro-dice p { margin: 6px 0 6px; font-size: 18px; line-height: 1.38; font-weight: 500; color: #fbefd8; }
+.origen { margin-left: 6px; color: var(--tenue); letter-spacing: .06em; }
+.boton-texto { background: none; border: 0; color: var(--oro); font: 700 14px var(--fuente); padding: 4px 0; cursor: pointer; }
+.avisos { display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: hidden; }
+.aviso {
+  padding: 12px 16px; border-radius: 12px; font-size: 18px; font-weight: 700; line-height: 1.25;
+  background: var(--panel-2); border: 1px solid var(--borde); border-left: 6px solid var(--ambar);
+  animation: entra .25s ease-out; transition: opacity .5s, transform .5s;
+}
+.aviso.alta { border-left-color: var(--rojo); background: #241417; }
+.aviso.baja { border-left-color: var(--cian); }
+.aviso.info { border-left-color: var(--verde); }
+.aviso.sale { opacity: 0; transform: translateX(30px); }
+@keyframes entra { from { opacity: 0; transform: translateY(-8px); } }
+
+/* --- botonera ------------------------------------------------------------------------------------------- */
+.botonera { display: flex; align-items: center; gap: 12px; padding: 14px 16px 16px; }
+.boton {
+  font: 800 21px var(--fuente); color: var(--texto); background: var(--panel-2);
+  border: 1px solid var(--borde); border-radius: 14px; min-height: 72px; padding: 0 24px; cursor: pointer;
+  transition: transform .08s, background .2s, opacity .2s; white-space: nowrap;
+}
+.boton:active { transform: scale(.97); }
+.boton:disabled { opacity: .32; cursor: default; }
+.boton.primario { background: linear-gradient(180deg, #ff8a33, #e8630c); border-color: #ff9b52; color: #1b0d02; min-width: 230px; }
+.boton.robot { background: linear-gradient(180deg, #2fb2ec, #1b8cc2); border-color: #59c6f5; color: #031520; }
+.boton.dorado { background: linear-gradient(180deg, #f0cf8d, #cfa458); border-color: #f6dca7; color: #241703; }
+.boton.peligro { margin-left: auto; background: transparent; color: #ff9a9b; border-color: #5a2a2d; }
+.niveles { margin-left: 4px; align-items: center; padding-left: 12px; }
+.niveles .etiqueta { margin-right: 10px; }
+.niveles button { min-height: 70px; font-size: 18px; padding: 0 18px; border-left: 1px solid var(--borde); border-right: 0; }
+.niveles button.activo { background: #e9eef6; color: #0b0e13; }
+
+/* --- certificado ---------------------------------------------------------------------------------------- */
+.certificado-fondo {
+  position: fixed; inset: 0; background: rgba(4,6,9,.78); display: grid; place-items: center; z-index: 10;
+  backdrop-filter: blur(6px); animation: entra .4s ease-out;
+}
+.certificado {
+  width: min(900px, 92vw); padding: 14px; border-radius: 10px;
+  background: linear-gradient(135deg, #f8f1e2, #efe2c6); color: #2b2214;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6);
+}
+.cert-borde { border: 3px double #b58a3c; border-radius: 6px; padding: 28px 44px 26px; text-align: center; position: relative; }
+.cert-sello { width: 74px; height: 74px; margin: 0 auto 8px; border-radius: 50%; background: #1b2230; display: grid; place-items: center; box-shadow: 0 0 0 4px #c9a25a; }
+.cert-sello svg { width: 46px; height: 46px; }
+.cert-escuela { letter-spacing: .3em; text-transform: uppercase; font-size: 13px; color: #8a6a2e; font-weight: 700; }
+.certificado h1 { font-family: Georgia, "Times New Roman", serif; font-size: 40px; margin: 10px 0 8px; color: #2a1d08; }
+.cert-texto { font-size: 19px; margin: 0 auto 18px; max-width: 640px; line-height: 1.45; }
+.cert-datos { display: flex; justify-content: center; gap: 48px; margin-bottom: 18px; }
+.cert-datos div { display: flex; flex-direction: column; gap: 4px; }
+.cert-datos .etiqueta, .cert-firmas .etiqueta { color: #8a6a2e; }
+.cert-datos strong { font-size: 26px; }
+.cert-firmas { display: flex; justify-content: space-around; margin: 6px 0 20px; }
+.cert-firmas div { display: flex; flex-direction: column; gap: 4px; min-width: 220px; border-top: 1px solid #b58a3c; padding-top: 8px; }
+.firma { font-family: "Brush Script MT", "Segoe Script", cursive; font-size: 24px; color: #3b2d14; }
+.cert-botones { display: flex; justify-content: center; gap: 14px; }
+.cert-botones .boton:not(.robot) { background: #2b2214; color: #f8f1e2; border-color: #2b2214; }
+
+/* --- portátil y pantallas más pequeñas ---------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .principal { grid-template-columns: 1fr 320px; }
+  #nota { font-size: 84px; }
+  .boton { font-size: 18px; padding: 0 16px; }
+  .marca-sub, .ajustes-sim #lbl-pasada { display: none; }
+  .leyenda { display: none; }
+}
+@media (max-height: 700px) {
+  body { grid-template-rows: 56px 1fr 88px; }
+  .boton, .niveles button { min-height: 60px; }
+  #nota { font-size: 80px; }
+}

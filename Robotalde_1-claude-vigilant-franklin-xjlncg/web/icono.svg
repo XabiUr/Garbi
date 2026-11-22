@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#ff7a1a"/>
+    </linearGradient>
+    <symbol id="chispa" viewBox="0 0 32 32">
+      <rect x="2" y="21" width="28" height="5" rx="1.5" fill="#5b6576"/>
+      <path d="M6 21c3-2.2 6.5-3 10-3s7 .8 10 3" fill="none" stroke="url(#g)" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M16 3l2.2 6.3 6.3-2.3-3.6 5.6 5.1 2.6-6.6.6L16 22l-2.6-6.6-6.6-.6 5.1-2.6L8.3 7l6.3 2.3z" fill="url(#g)"/>
+    </symbol>
+  </defs>
+  <use href="#chispa"/>
+</svg>
