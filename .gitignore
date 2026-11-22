@@ -7,15 +7,17 @@ __pycache__/
 # Sistema
 .DS_Store
 
-# Logs por ciclo del supervisor (pesan y cambian en cada prueba; están en la copia de seguridad)
-plana/Logs/
-plana/estado_supervisor.json*
-plana/camara_*.jpg*
-plana/video/grabaciones/
-plana/video/*.mp4
-plana/video/clips/
+# Notas internas
+CLAUDE.md
+
+# Generados en cada ejecución (logs, estado e imágenes para la web)
+Logs/
+estado_supervisor.json*
+camara_*.jpg*
 
 # Vídeos (pesan demasiado para GitHub)
+video/grabaciones/
+video/clips/
 *.mp4
 *.MP4
 *.mov

@@ -1,8 +1,0 @@
-# Dependencias del simulador en el Space (sin torch ni LeRobot: las políticas solo se cargan si se piden).
-mujoco==4.0.1
-numpy==2.2.6
-aiohttp==3.14.5
-opencv-python-headless==4.13.0.92
-pillow==13.0.0
-pyserial==3.5
-anthropic==2.8.0
