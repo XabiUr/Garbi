@@ -11,3 +11,12 @@ __pycache__/
 plana/Logs/
 plana/estado_supervisor.json*
 plana/camara_*.jpg*
+plana/video/grabaciones/
+plana/video/*.mp4
+plana/video/clips/
+
+# Vídeos (pesan demasiado para GitHub)
+*.mp4
+*.MP4
+*.mov
+*.MOV
