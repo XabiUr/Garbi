@@ -160,12 +160,15 @@ function duracion(s) {
 }
 
 // Controles: la acción principal cambia con el estado; lo que no se puede usar se desactiva y se dice por qué.
+let limpiezaPedida = 0;   // instante en que se pulsó una limpieza: bloquea las demás hasta que cambie el estado
 function pintarControles(e) {
   const est = e.estado, det = e.detalle || "";
   const apagado = est === "apagado", arrancando = est === "arrancando", apagando = det.startsWith("Apagando");
   const emergencia = est === "emergencia";
   const limpiando = est === "limpieza_tabla" || est === "limpieza_tapete";
-  const listo = !apagando && (est === "reposo" || est === "despierto");
+  // Listo = en reposo de verdad y sin una limpieza recién pedida (hasta que el estado cambie)
+  if (limpiezaPedida && (est !== "reposo" || Date.now() - limpiezaPedida > 5000)) limpiezaPedida = 0;
+  const listo = !apagando && est === "reposo" && !limpiezaPedida;
 
   // Equipo
   const be = $("#boton-energia");
@@ -186,6 +189,7 @@ function pintarControles(e) {
     : arrancando ? "Espera a que termine de arrancar" : apagando ? "El equipo se está apagando"
     : emergencia ? "Rearma la emergencia antes de mover el brazo"
     : limpiando ? "Limpiando · pulsa Parar para detener"
+    : limpiezaPedida ? "Limpieza pedida · empezando…"
     : listo ? "Listo · el brazo se moverá al pulsar" : "Disponible cuando el brazo vuelva a reposo";
   document.querySelectorAll(".controles .boton-accion").forEach((b) => {
     b.disabled = !listo;
@@ -329,7 +333,12 @@ function emergencia(origen) {
 document.addEventListener("click", (ev) => {
   const b = ev.target.closest("[data-comando]");
   if (b && b.id === "boton-energia") confirmarEnergia(b.dataset.comando, b);
-  else if (b) mandar(b.dataset.comando, b);
+  else if (b && b.classList.contains("boton-accion")) {
+    // limpieza: bloquear al instante las dos (evita la doble pulsación antes de que llegue el nuevo estado)
+    limpiezaPedida = Date.now();
+    document.querySelectorAll(".controles .boton-accion").forEach((x) => { x.disabled = true; });
+    mandar(b.dataset.comando, b);
+  } else if (b) mandar(b.dataset.comando, b);
   const c = ev.target.closest("[data-cerebro]");
   if (c) fetch("/api/cerebro", {method: "POST", headers: {"Content-Type": "application/json"},
                                 body: JSON.stringify({cerebro: c.dataset.cerebro})}).catch(() => {});
@@ -432,10 +441,6 @@ function aplicarModo(nuevo) {
   try { localStorage.setItem("garbi.modo", modo); } catch (_) { /* sin almacenamiento */ }
   if (ultimo) pintar(ultimo);
 }
-document.querySelector(".selector-modo").addEventListener("click", (ev) => {
-  const b = ev.target.closest("[data-modo]");
-  if (b) aplicarModo(b.dataset.modo);
-});
 
 // ------------------------------------------------------------------------------------------------- arranque
 // El modo «Fábrica» se ha quitado: siempre «Taller» (y se olvida un modo guardado de antes)

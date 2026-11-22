@@ -135,6 +135,19 @@ class Supervisor:
         # Calibración propia del barrido (independiente del taladro): modo rejilla (mesa.json + posturas_mesa.json)
         # o modo ik (boquilla.json), según config barrido.modo
         self.mapeo_ik = barrido.crear_mapeo(config)
+
+        # Manos (MediaPipe): bloquean los barridos (antes de empezar y durante). Área: la del barrido (mesa.json)
+        self.manos = {"hay_manos": False, "n": 0, "manos": [], "ms": 0.0}
+        self.detector_manos = None
+        self.exigir_manos = config.get("manos", {}).get("exigir_detector", True)
+        try:
+            from manos import DetectorManos
+            area = getattr(self.mapeo_ik, "esquinas_px", None)
+            self.detector_manos = DetectorManos(config, area if area is not None else self.detector.esquinas_px)
+            print("[Supervisor] Detector de manos (MediaPipe) listo ✓")
+        except Exception as e:
+            print(f"⚠️  [Supervisor] Sin detector de manos ({e}): "
+                  + ("los barridos quedan BLOQUEADOS" if self.exigir_manos else "los barridos no comprueban manos"))
         self.recorrido_px = None      # zigzag congelado al empezar (px)
         self.traj_barrido = None
         self.barrido_pedido = False
@@ -369,7 +382,7 @@ class Supervisor:
             if self.taladro_visible(percepcion):
                 self.tiempo_sin_taladro = 0.0
                 if self.barrido_pedido or self.barrido_tapete_pedido:
-                    self.avisar("No barro: hay un taladro a la vista")
+                    self.avisar("No limpio: hay un taladro a la vista")
                 self.barrido_pedido = False   # con el taladro en escena no se barre
                 self.barrido_tapete_pedido = False
             else:
@@ -388,6 +401,8 @@ class Supervisor:
             self.tiempo_trayectoria += self.dt
             if self.taladro_visible(percepcion):
                 self.abortar_barrido("ha aparecido el taladro")
+            elif self.manos["hay_manos"]:
+                self.abortar_barrido("hay una mano en la zona")
             elif self.tiempo_trayectoria >= self.trayectoria_actual.duracion:
                 self.trayectoria_actual = self.traj_barrido
                 self.tiempo_trayectoria = 0.0
@@ -397,6 +412,8 @@ class Supervisor:
             self.tiempo_trayectoria += self.dt
             if self.taladro_visible(percepcion):
                 self.abortar_barrido("ha aparecido el taladro")
+            elif self.manos["hay_manos"]:
+                self.abortar_barrido("hay una mano en la zona")
             elif self.tiempo_trayectoria >= self.trayectoria_actual.duracion:
                 print("[Supervisor] Barrido completado")
                 self.tabla_barrida = self.madera["esquinas_px"] if self.madera and self.madera["hay_madera"] else None
@@ -601,6 +618,8 @@ class Supervisor:
         img_debug = self.detector.dibujar_debug(img_bgr, percepcion)
         if self.madera is not None:
             self.detector_madera.dibujar(img_debug, self.madera)
+        if self.detector_manos is not None:
+            self.detector_manos.dibujar(img_debug, self.manos)
         if self.estado in (Estado.BARRIDO_IDA, Estado.BARRIENDO) and self.recorrido_px is not None:
             progreso = None
             if self.estado == Estado.BARRIENDO:
@@ -737,7 +756,7 @@ class Supervisor:
             datos = {"t": time.time(), "pid": os.getpid(), "estado": self.estado.value,
                      "barrido": self.tipo_barrido, "madera": bool(m and m["hay_madera"]),
                      "cerebro": self.cerebros_nombres[self.cerebro_actual_idx], "aviso": self.ultimo_aviso,
-                     "cerebros": list(self.cerebros_nombres),
+                     "cerebros": list(self.cerebros_nombres), "manos": int(self.manos["n"]),
                      "barrido_listo": bool(self.mapeo_ik.ok)}
             with open("estado_supervisor.json.tmp", "w") as f:
                 json.dump(datos, f)
@@ -746,8 +765,20 @@ class Supervisor:
             pass
 
     def iniciar_barrido(self, tapete: bool = False):
+        # Una petición a la vez: se descartan las que hubiera pendientes (si no, al acabar arrancaría otra sola)
+        self.barrido_pedido = self.barrido_tapete_pedido = False
         if not self.mapeo_ik.ok:
             self.avisar("Barrido: falta la calibración (calibrar_mesa.py + grabar_posturas_mesa.py)")
+            return
+        # Seguridad antes de mover el brazo: manos (los dos barridos) y tabla (el del tapete)
+        if self.detector_manos is None and self.exigir_manos:
+            self.avisar("No barro: no hay detector de manos (MediaPipe)")
+            return
+        if self.manos["hay_manos"] or self.manos["n"] > 0:
+            self.avisar(f"No limpio {'el tapete' if tapete else 'la tabla'}: hay una mano en la zona")
+            return
+        if tapete and self.madera is not None and self.madera["hay_madera"]:
+            self.avisar("No limpio el tapete: hay una tabla encima")
             return
         k = vel = dur = alt = None
         if tapete:
@@ -787,7 +818,7 @@ class Supervisor:
     def abortar_barrido(self, motivo):
         """Termina el barrido (motivo=None si ha acabado bien) y vuelve a reposo con la vuelta de siempre."""
         if motivo:
-            print(f"[Supervisor] Barrido interrumpido: {motivo}")
+            self.avisar(f"Barrido interrumpido: {motivo}")
         # Vuelta propia del barrido (la ida al revés): primero sube en vertical, luego retrocede a reposo
         obs_actual = self.robot.get_observation()
         self.trayectoria_actual = self.barrido.planificar_vuelta_barrido(obs_actual, self.config, self.postura_reposo,
@@ -902,6 +933,11 @@ class Supervisor:
                 # 2. Percepción
                 percepcion = self.detector.detectar(obs["front"])
                 self.madera = self.detectar_madera(obs["front"])
+                if self.detector_manos is not None and self.ciclo % 3 == 0:   # ~10 Hz, ~5 ms
+                    try:
+                        self.manos = self.detector_manos.detectar(obs["front"])
+                    except Exception as e:
+                        print(f"⚠️  [Supervisor] Fallo detectando manos: {e}")
 
                 # 3. Máquina de estados
                 self.maquina_estados(percepcion)

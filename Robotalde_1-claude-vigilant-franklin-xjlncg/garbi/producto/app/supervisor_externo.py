@@ -146,6 +146,8 @@ class OrquestadorSupervisor:
             estado = Estado.LIMPIEZA_TAPETE if d["barrido"] == "tapete" else Estado.LIMPIEZA_TABLA
             que = "el tapete" if d["barrido"] == "tapete" else "la tabla"
             detalle = f"Vuelvo a reposo tras barrer {que}" if e == "VOLVIENDO" else f"{DETALLES.get(e, e)} {que}"
+        elif e == "VOLVIENDO":   # volviendo a reposo (tras el taladro): el brazo se mueve, no está listo
+            estado, detalle = Estado.DESPIERTO, DETALLES["VOLVIENDO"]
         else:
             estado, detalle = ESTADOS.get(e, Estado.REPOSO), DETALLES.get(e, e)
         self._parada = e == "PARADA"
