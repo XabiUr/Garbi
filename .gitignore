@@ -10,3 +10,4 @@ __pycache__/
 # Logs por ciclo del supervisor (pesan y cambian en cada prueba; están en la copia de seguridad)
 plana/Logs/
 plana/estado_supervisor.json*
+plana/camara_*.jpg*

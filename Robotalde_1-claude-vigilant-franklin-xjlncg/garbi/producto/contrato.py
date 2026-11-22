@@ -18,6 +18,7 @@ import numpy as np
 
 class Estado(str, enum.Enum):
     APAGADO = "apagado"            # no se mueve ni mira; «enciéndete» lo pasa a REPOSO
+    ARRANCANDO = "arrancando"      # encendido pero aún no listo (conectando el robot, yendo a reposo)
     REPOSO = "reposo"              # postura de reposo (girado a la derecha), esperando mano + taladro quieto
     ACERCAMIENTO = "acercamiento"  # la política (ACT o círculo) lleva la boca a la punta de la broca
     EN_BROCA = "en_broca"          # ha llegado: quieto junto a la broca, aspirando, hasta que se va mano + taladro

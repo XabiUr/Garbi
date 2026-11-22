@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 import time
 
@@ -73,7 +74,31 @@ def _con_supervisor(a) -> int:
     from garbi.producto.app.supervisor_externo import (ARGS_POR_DEFECTO, CARPETA_POR_DEFECTO,
                                                        OrquestadorSupervisor)
 
+    import signal
+    import threading
+    from datetime import datetime
+
     orquestador = OrquestadorSupervisor(a.supervisor_dir or CARPETA_POR_DEFECTO, a.supervisor_args or ARGS_POR_DEFECTO)
+
+    # Registro en archivo (plana/Logs/web_*.log): si la web se cierra, queda escrito por qué
+    carpeta_logs = orquestador.carpeta / "Logs"
+    carpeta_logs.mkdir(exist_ok=True)
+    ruta_log = carpeta_logs / f"web_{datetime.now():%Y%m%d_%H%M%S}.log"
+    fichero = logging.FileHandler(ruta_log, encoding="utf-8")
+    fichero.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+    logging.getLogger().addHandler(fichero)
+    sys.excepthook = lambda t, v, tb: log.critical("Error no controlado: la web se cierra", exc_info=(t, v, tb))
+    threading.excepthook = lambda x: log.error("Error en el hilo %s", x.thread.name if x.thread else "?",
+                                                exc_info=(x.exc_type, x.exc_value, x.exc_traceback))
+
+    # Cerrar la ventana de Terminal (SIGHUP) o un kill (SIGTERM): salir ordenado, apagando antes el supervisor
+    def _senal(num, _frame):
+        log.warning("Recibida %s: cierro la web y apago el supervisor", signal.Signals(num).name)
+        raise KeyboardInterrupt
+    for s in (signal.SIGHUP, signal.SIGTERM):
+        signal.signal(s, _senal)
+    log.info("Web arrancada (PID %s) · registro en %s", os.getpid(), ruta_log)
+
     servidor = arrancar_app(orquestador, a.host, a.puerto, demo=False, seta_global=not a.sin_seta_global,
                             abrir_navegador=not a.sin_navegador)
     print(f"Garbi (supervisor en {orquestador.carpeta}) en {servidor.url}  ·  Ctrl+C para salir")
@@ -81,9 +106,10 @@ def _con_supervisor(a) -> int:
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        pass
+        log.info("Cierre pedido (Ctrl+C, ventana cerrada o kill)")
     finally:
         print("Cerrando: apago el supervisor si sigue en marcha...")
+        log.info("Cerrando: apago el supervisor si sigue en marcha")
         orquestador.cerrar()
         servidor.parar()
     return 0

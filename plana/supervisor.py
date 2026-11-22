@@ -107,11 +107,13 @@ class Supervisor:
         "wrist_flex", "wrist_roll", "gripper"
     ]
 
-    def __init__(self, robot, config, cerebros_dict, cerebro_inicial, modo_simulado, modo_seguir=False):
+    def __init__(self, robot, config, cerebros_dict, cerebro_inicial, modo_simulado, modo_seguir=False,
+                 con_ventana=True):
         self.robot = robot
         self.config = config
         self.modo_simulado = modo_simulado
         self.modo_seguir = modo_seguir  # True: seguimiento continuo (antiguo), False: posición fija (nuevo)
+        self.con_ventana = con_ventana  # False (--sin-ventana): sin ventana de OpenCV; la imagen va a la web por JPEG
 
         # Componentes
         from percepcion import DetectorMorado
@@ -160,6 +162,7 @@ class Supervisor:
         #   SIGTERM -> salir como con Q (vuelve a reposo y cierra)
         #   SIGUSR1 -> PARADA (como ESPACIO) · SIGUSR2 -> continuar (como C)
         self.salida_pedida = False
+        self.pid_padre = None   # --pid-padre: la web que me lanzó; si desaparece, vuelvo a reposo y me apago
         # Canal con la web (garbi.producto.app --supervisor): órdenes por UDP en 127.0.0.1 y estado en un JSON
         self.puerto_comandos = config["supervisor"].get("puerto_comandos", 8765)
         self.sock_comandos = None
@@ -273,6 +276,21 @@ class Supervisor:
         if self.log_file is not None:
             self.log_file.close()
             print("[Supervisor] Log cerrado")
+
+    def poner_cerebro(self, nombre: str):
+        """Cambia al cerebro `nombre` (lo pide la web). Solo en REPOSO: nunca a mitad de una aproximación."""
+        if nombre not in self.cerebros:
+            self.avisar(f"El cerebro «{nombre}» no está cargado (disponibles: {', '.join(self.cerebros_nombres)})")
+            return
+        if self.cerebros_nombres[self.cerebro_actual_idx] == nombre:
+            return
+        if self.estado != Estado.REPOSO:
+            self.avisar(f"Cambio de cerebro solo en reposo (ahora {self.estado.value})")
+            return
+        self.cerebro_actual_idx = self.cerebros_nombres.index(nombre)
+        self.cerebro = self.cerebros[nombre]
+        self.cerebro.reset()
+        self.avisar(f"Aproximación al taladro con {nombre.upper()}")
 
     def cambiar_cerebro(self, direccion: int):
         """
@@ -695,6 +713,23 @@ class Supervisor:
                 break
         return orden
 
+    def publicar_imagenes(self, img_viz, obs):
+        """camara_front.jpg (imagen anotada, ~15 fps) y camara_gripper.jpg (~7 fps) para la web. Escritura atómica."""
+        try:
+            salidas = []
+            if self.ciclo % 2 == 0:
+                salidas.append(("camara_front.jpg", img_viz))
+            if self.ciclo % 4 == 1 and obs.get("gripper") is not None:
+                salidas.append(("camara_gripper.jpg", cv2.cvtColor(obs["gripper"], cv2.COLOR_RGB2BGR)))
+            for nombre, img in salidas:
+                ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                if ok:
+                    with open(nombre + ".tmp", "wb") as f:
+                        f.write(buf.tobytes())
+                    os.replace(nombre + ".tmp", nombre)
+        except Exception:
+            pass
+
     def escribir_estado_web(self):
         """estado_supervisor.json para la web (escritura atómica)."""
         try:
@@ -702,6 +737,7 @@ class Supervisor:
             datos = {"t": time.time(), "pid": os.getpid(), "estado": self.estado.value,
                      "barrido": self.tipo_barrido, "madera": bool(m and m["hay_madera"]),
                      "cerebro": self.cerebros_nombres[self.cerebro_actual_idx], "aviso": self.ultimo_aviso,
+                     "cerebros": list(self.cerebros_nombres),
                      "barrido_listo": bool(self.mapeo_ik.ok)}
             with open("estado_supervisor.json.tmp", "w") as f:
                 json.dump(datos, f)
@@ -883,7 +919,9 @@ class Supervisor:
 
                 # 7. Visualización
                 img_viz = self.dibujar_visualizacion(obs, percepcion)
-                cv2.imshow("Supervisor", img_viz)
+                if self.con_ventana:
+                    cv2.imshow("Supervisor", img_viz)
+                self.publicar_imagenes(img_viz, obs)
 
                 # 8. Logging
                 tick_fin = time.time()
@@ -891,13 +929,15 @@ class Supervisor:
                 self.escribir_log(obs, percepcion, accion_segura, fps_real)
 
                 # 9. Manejar teclas
-                tecla = cv2.waitKey(1) & 0xFF
+                tecla = (cv2.waitKey(1) & 0xFF) if self.con_ventana else 0xFF
 
                 # Órdenes de la web por UDP: se traducen a la tecla equivalente
                 orden = self.leer_orden_web()
                 if orden:
                     print(f"[Supervisor] Orden de la web: {orden}")
-                    if orden == "parar":
+                    if orden.startswith("cerebro:"):
+                        self.poner_cerebro(orden.split(":", 1)[1])
+                    elif orden == "parar":
                         if self.estado in (Estado.BARRIDO_IDA, Estado.BARRIENDO):
                             self.abortar_barrido("parado desde la web")
                     else:
@@ -907,6 +947,10 @@ class Supervisor:
                             tecla = 0xFF
 
                 # Peticiones de la web (por señal): se traducen a la tecla equivalente
+                # Seguridad: si la web que me lanzó ha desaparecido, nadie me controla → vuelvo a reposo y me apago
+                if self.pid_padre and not self.salida_pedida and self.ciclo % 15 == 0 and os.getppid() != self.pid_padre:
+                    self.avisar("La web se ha cerrado: vuelvo a reposo y me apago")
+                    self.salida_pedida = True
                 if self.salida_pedida:
                     print("\n[Supervisor] Apagado pedido desde la web")
                     tecla = ord('q')
@@ -998,9 +1042,15 @@ def main():
     parser.add_argument('--cerebro', type=str, default='zonas',
                        choices=['zonas', 'act'], help='Cerebro a usar')
     parser.add_argument('--modelo', type=str, default=None,
-                       help='Path a modelo ACT (requerido si --cerebro act)')
+                       help='Path a modelo ACT (requerido si --cerebro act; con zonas, lo carga para poder cambiar)')
     parser.add_argument('--duracion', type=float, default=None,
                        help='Duración en segundos (None = infinito)')
+    parser.add_argument('--puerto-comandos', type=int, default=None,
+                       help='Puerto UDP de órdenes de la web (por defecto config supervisor.puerto_comandos o 8765)')
+    parser.add_argument('--pid-padre', type=int, default=None,
+                       help='PID de la web que lanza el supervisor: si desaparece, vuelve a reposo y se apaga')
+    parser.add_argument('--sin-ventana', action='store_true',
+                       help='Sin ventana de OpenCV (la imagen se publica para la web en camara_*.jpg)')
     parser.add_argument('--seguir', action='store_true',
                        help='Modo seguimiento continuo (default: posición fija)')
     args = parser.parse_args()
@@ -1015,6 +1065,8 @@ def main():
 
     # Cargar config
     config = cargar_config()
+    if args.puerto_comandos:
+        config["supervisor"]["puerto_comandos"] = args.puerto_comandos
 
     # Crear robot
     if args.sin_robot:
@@ -1049,9 +1101,14 @@ def main():
     # Siempre crear CerebroZonas
     cerebros["zonas"] = CerebroZonas(config)
 
-    # Crear CerebroACT si se especificó
-    if args.cerebro == 'act':
-        cerebros["act"] = CerebroACT(args.modelo, device="mps")
+    # Crear CerebroACT si hay modelo (aunque se arranque con zonas): así se puede cambiar en vivo (Z/A o la web)
+    if args.modelo:
+        try:
+            cerebros["act"] = CerebroACT(args.modelo, device="mps")
+        except Exception as e:
+            if args.cerebro == 'act':
+                raise
+            print(f"⚠️  No se pudo cargar el ACT ({e}): solo zonas")
 
     # Crear y ejecutar supervisor
     supervisor = Supervisor(
@@ -1060,9 +1117,11 @@ def main():
         cerebros_dict=cerebros,
         cerebro_inicial=args.cerebro,
         modo_simulado=modo_simulado,
-        modo_seguir=args.seguir
+        modo_seguir=args.seguir,
+        con_ventana=not args.sin_ventana
     )
 
+    supervisor.pid_padre = args.pid_padre
     supervisor.run(duracion_s=args.duracion)
 
 

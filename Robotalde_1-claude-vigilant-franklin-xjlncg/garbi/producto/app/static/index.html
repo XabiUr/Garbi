@@ -18,17 +18,10 @@
       </div>
     </div>
     <div class="cabecera-centro">
-      <div class="selector-modo" role="radiogroup" aria-label="Modo de la interfaz">
-        <button type="button" role="radio" data-modo="taller" aria-checked="true">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7M5 10v10h14V10"/></svg>Taller</button>
-        <button type="button" role="radio" data-modo="fabrica" aria-checked="false">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20V10l5 3V10l5 3V10l5 3V4h3v16H3Z"/></svg>Fábrica</button>
-      </div>
       <span class="chip chip-demo" id="chip-demo" hidden>Modo demo</span>
-      <span class="chip" id="chip-conexion"><span class="punto"></span><span id="texto-conexion">Conectando…</span></span>
+      <span class="chip" id="chip-conexion" hidden><span class="punto"></span><span id="texto-conexion">Sin conexión con Garbi</span></span>
     </div>
     <div class="cabecera-derecha">
-      <span class="pista-seta"><kbd>Espacio</kbd> <span data-fabrica="o seta USB: paro de emergencia">o seta = emergencia</span></span>
     </div>
   </header>
 
@@ -64,8 +57,8 @@
         </div>
       </article>
 
-      <!-- CÁMARAS DESACTIVADAS de momento: el supervisor de plana tiene las cámaras abiertas y la web no puede
-           abrirlas a la vez. Para volver a activarlas, quitar este comentario.
+      <!-- Cámaras: las abre el supervisor y publica sus imágenes (camara_front.jpg anotada y camara_gripper.jpg);
+           la web solo las enseña (/video/top y /video/wrist). -->
       <div class="camaras">
         <figure class="tarjeta camara">
           <div class="camara-marco">
@@ -82,20 +75,56 @@
           <figcaption><strong data-fabrica="CAM 2 · Efector">Cámara de la muñeca</strong><span data-fabrica="Boquilla y herramienta">La boquilla y la broca</span></figcaption>
         </figure>
       </div>
-      -->
 
+      <!-- Controles agrupados por función. La acción principal cambia con el estado y lo que no se puede usar se
+           desactiva con su motivo (pintarControles en app.js). El rojo queda reservado para la emergencia. -->
       <div class="tarjeta controles">
-        <button class="boton boton-primario" data-comando="encender">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M6.3 7.3a8 8 0 1 0 11.4 0" /></svg><span data-fabrica="Marcha">Encender</span></button>
-        <button class="boton" data-comando="apagar">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M6.3 7.3a8 8 0 1 0 11.4 0" /></svg><span data-fabrica="Apagado">Apagar</span></button>
-        <button class="boton" data-comando="limpiar_tabla">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="7" width="16" height="10" rx="1.5"/><path d="M7 10h10M7 14h6"/></svg><span data-fabrica="Ciclo tabla">Limpiar tabla</span></button>
-        <button class="boton" data-comando="limpiar_tapete">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 4v16M15 4v16"/></svg><span data-fabrica="Ciclo tapete">Limpiar tapete</span></button>
-        <button class="boton" data-comando="parar">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span data-fabrica="Detener ciclo">Parar</span></button>
+        <section class="grupo grupo-equipo" aria-labelledby="titulo-equipo">
+          <h3 class="grupo-titulo" id="titulo-equipo">Equipo</h3>
+          <button class="boton" id="boton-energia" data-comando="encender">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M6.3 7.3a8 8 0 1 0 11.4 0" /></svg><span id="texto-energia">Encender</span></button>
+          <p class="grupo-ayuda" id="ayuda-equipo"></p>
+        </section>
+        <section class="grupo grupo-brazo" aria-labelledby="titulo-brazo">
+          <h3 class="grupo-titulo" id="titulo-brazo">Brazo <span class="aviso-mueve">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17v.5"/></svg>se moverá</span></h3>
+          <div class="grupo-botones">
+            <button class="boton boton-accion" data-comando="limpiar_tabla">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="7" width="16" height="10" rx="1.5"/><path d="M7 10h10M7 14h6"/></svg><span data-fabrica="Ciclo tabla">Limpiar tabla</span></button>
+            <button class="boton boton-accion" data-comando="limpiar_tapete">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 4v16M15 4v16"/></svg><span data-fabrica="Ciclo tapete">Limpiar tapete</span></button>
+            <button class="boton boton-parar" data-comando="parar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span data-fabrica="Detener ciclo">Parar</span></button>
+          </div>
+          <p class="grupo-ayuda" id="ayuda-brazo"></p>
+        </section>
+        <div class="selector-cerebro" role="group" aria-label="Aproximación al taladro">
+          <span class="selector-titulo">Aproximación al taladro</span>
+          <button class="boton" data-cerebro="act">ACT</button>
+          <button class="boton" data-cerebro="zonas">Zonas</button>
+        </div>
       </div>
+
+
+      <article class="tarjeta eventos">
+        <h2 data-fabrica="Registro de eventos">Actividad reciente</h2>
+        <ol id="lista-eventos" class="lista-eventos"></ol>
+      </article>
+    </section>
+
+    <aside class="columna-lateral">
+      <article class="tarjeta emergencia">
+        <div class="seta">
+          <button class="boton-emergencia" id="boton-emergencia" title="Parada de emergencia (seta o barra espaciadora)">
+            <span class="boton-emergencia-texto">EMERGENCIA</span>
+          </button>
+          <span class="seta-pista">SETA o <kbd>ESPACIO</kbd></span>
+        </div>
+        <div class="emergencia-lado">
+          <p>Para el robot con un paro de emergencia.</p>
+          <button class="boton boton-rearmar-lateral" id="boton-rearmar-lateral" data-comando="rearmar" hidden>Rearmar</button>
+        </div>
+      </article>
 
       <article class="tarjeta indicadores">
         <div class="tarjeta-cabecera">
@@ -112,28 +141,6 @@
           <div class="kpi kpi-disponibilidad"><span class="kpi-valor" id="kpi-disponibilidad">100 %</span><span class="kpi-etiqueta">Disponibilidad</span>
             <span class="kpi-barra"><span id="kpi-barra-disponibilidad"></span></span></div>
         </div>
-      </article>
-
-      <article class="tarjeta eventos">
-        <h2 data-fabrica="Registro de eventos">Actividad reciente</h2>
-        <ol id="lista-eventos" class="lista-eventos"></ol>
-      </article>
-    </section>
-
-    <aside class="columna-lateral">
-      <article class="tarjeta emergencia">
-        <button class="boton-emergencia" id="boton-emergencia" title="Parada de emergencia (barra espaciadora)">
-          <span class="boton-emergencia-texto">EMERGENCIA</span>
-        </button>
-        <div class="emergencia-lado">
-          <p data-fabrica="Paro inmediato con par en los ejes. Equivale a la seta USB (espacio).">Para el robot al instante. La seta USB hace lo mismo.</p>
-          <button class="boton boton-rearmar-lateral" data-comando="rearmar">Rearmar</button>
-        </div>
-      </article>
-
-      <article class="tarjeta tecnologias">
-        <h2 data-fabrica="Estado de subsistemas">Tecnologías funcionando</h2>
-        <ul id="lista-tecnologias" class="lista-tecnologias"></ul>
       </article>
 
       <article class="tarjeta chat">
@@ -160,6 +167,35 @@
       </article>
     </aside>
   </main>
+
+  <!-- Confirmaciones de Encender y Apagar (el brazo se va a mover). Cancelar es la opción por defecto. -->
+  <dialog class="modal" id="modal-encender" aria-labelledby="modal-encender-titulo">
+    <form method="dialog">
+      <h2 id="modal-encender-titulo">Antes de encender</h2>
+      <p class="modal-texto">Al encender, el brazo se conecta y se mueve a su posición de reposo. Comprueba:</p>
+      <label class="modal-check"><input type="checkbox" id="check-camino">
+        <span><strong>No hay nada ni nadie</strong> en el recorrido del brazo</span></label>
+      <label class="modal-check"><input type="checkbox" id="check-postura">
+        <span>El brazo está en una <strong>posición normal</strong>: cerca de reposo, sin estar enganchado ni forzado</span></label>
+      <div class="modal-botones">
+        <button class="boton" value="cancelar" autofocus>Cancelar</button>
+        <button class="boton es-principal" value="confirmar" id="confirmar-encender" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M6.3 7.3a8 8 0 1 0 11.4 0" /></svg>Encender</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="modal" id="modal-apagar" aria-labelledby="modal-apagar-titulo">
+    <form method="dialog">
+      <h2 id="modal-apagar-titulo">¿Apagar el equipo?</h2>
+      <p class="modal-texto">El brazo volverá a su posición de reposo y después se cerrará el supervisor.
+        Si hay una limpieza en marcha, se interrumpe.</p>
+      <div class="modal-botones">
+        <button class="boton" value="cancelar" autofocus>Cancelar</button>
+        <button class="boton es-apagar" value="confirmar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M6.3 7.3a8 8 0 1 0 11.4 0" /></svg>Apagar</button>
+      </div>
+    </form>
+  </dialog>
 
   <script src="/static/app.js"></script>
 </body>

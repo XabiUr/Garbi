@@ -3,6 +3,7 @@
 
 const ESTADOS = {
   apagado:          { titulo: "Apagado",             icono: '<path d="M12 3v8M6.3 7.3a8 8 0 1 0 11.4 0"/>' },
+  arrancando:       { titulo: "Arrancando…",         icono: '<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/>' },
   reposo:           { titulo: "En reposo",           icono: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/>' },
   acercamiento:     { titulo: "Acercándose",         icono: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>' },
   en_broca:         { titulo: "En la broca",         icono: '<path d="M12 2v6M9 8h6l-1 10-2 4-2-4-1-10Z"/><path d="M4 18c2-1 3-3 3-5M20 18c-2-1-3-3-3-5"/>' },
@@ -14,7 +15,7 @@ const ESTADOS = {
 
 // Modo «Fábrica»: los mismos estados con nombres de planta.
 const TITULOS_FABRICA = {
-  apagado: "Equipo apagado", reposo: "Reposo · listo", acercamiento: "Aproximación", en_broca: "En posición · aspirando",
+  apagado: "Equipo apagado", arrancando: "Arranque en curso", reposo: "Reposo · listo", acercamiento: "Aproximación", en_broca: "En posición · aspirando",
   despierto: "Espera entre ciclos", limpieza_tabla: "Ciclo limpieza tabla", limpieza_tapete: "Ciclo limpieza tapete",
   emergencia: "Paro de emergencia",
 };
@@ -101,12 +102,15 @@ function pintar(e) {
     ? (e.aspiradora ? (fabrica() ? "Activar pedal" : "¡Enciéndela!") : (fabrica() ? "Manual · OFF" : "Manual · apagada"))
     : (e.aspiradora ? (fabrica() ? "ON" : "Aspirando") : (fabrica() ? "OFF" : "Apagada"));
   $("#valor-agujeros").textContent = e.agujeros ?? 0;
-  $("#valor-politica").textContent = e.politica === "act" ? "ACT" : (e.politica === "circulo" ? "Círculo" : e.politica);
+  $("#valor-politica").textContent = e.politica === "act" ? "ACT" : (e.politica === "circulo" ? "Círculo"
+    : (e.politica === "zonas" ? "Zonas" : e.politica));
+  document.querySelectorAll("[data-cerebro]").forEach((b) => b.classList.toggle("activo", b.dataset.cerebro === e.politica));
 
   const emergencia = e.estado === "emergencia";
   document.body.classList.toggle("en-emergencia", emergencia);
   $("#aviso-emergencia").hidden = !emergencia;
-  document.querySelectorAll(".controles .boton").forEach((b) => { b.disabled = emergencia; });
+  $("#boton-rearmar-lateral").hidden = !emergencia;   // rearmar solo tiene sentido en paro
+  pintarControles(e);
 
   $("#chip-demo").hidden = !e.demo;
   const chipLlm = $("#chip-llm");
@@ -155,6 +159,52 @@ function duracion(s) {
   return h ? `${h}:${String(m).padStart(2, "0")}:${String(seg).padStart(2, "0")}` : `${m}:${String(seg).padStart(2, "0")}`;
 }
 
+// Controles: la acción principal cambia con el estado; lo que no se puede usar se desactiva y se dice por qué.
+function pintarControles(e) {
+  const est = e.estado, det = e.detalle || "";
+  const apagado = est === "apagado", arrancando = est === "arrancando", apagando = det.startsWith("Apagando");
+  const emergencia = est === "emergencia";
+  const limpiando = est === "limpieza_tabla" || est === "limpieza_tapete";
+  const listo = !apagando && (est === "reposo" || est === "despierto");
+
+  // Equipo
+  const be = $("#boton-energia");
+  const esperando = arrancando || apagando;
+  be.dataset.comando = apagado ? "encender" : "apagar";
+  be.disabled = esperando;
+  be.classList.toggle("esperando", esperando);
+  be.classList.toggle("es-principal", apagado);
+  be.classList.toggle("es-apagar", !apagado && !esperando);
+  $("#texto-energia").textContent = arrancando ? "Arrancando…" : apagando ? "Apagando…"
+    : apagado ? (fabrica() ? "Marcha" : "Encender") : (fabrica() ? "Paro" : "Apagar");
+  $("#ayuda-equipo").textContent = apagado ? "El robot está apagado"
+    : arrancando ? "Conectando el robot y yendo a reposo…" : apagando ? "Volviendo a reposo para apagarse…"
+    : emergencia ? "En emergencia: rearma para seguir" : "Encendido";
+
+  // Brazo
+  const motivo = apagado ? "Enciende el equipo para usar el brazo"
+    : arrancando ? "Espera a que termine de arrancar" : apagando ? "El equipo se está apagando"
+    : emergencia ? "Rearma la emergencia antes de mover el brazo"
+    : limpiando ? "Limpiando · pulsa Parar para detener"
+    : listo ? "Listo · el brazo se moverá al pulsar" : "Disponible cuando el brazo vuelva a reposo";
+  document.querySelectorAll(".controles .boton-accion").forEach((b) => {
+    b.disabled = !listo;
+    b.classList.toggle("es-principal", listo);
+    b.title = listo ? "" : motivo;
+  });
+  const bp = $(".controles .boton-parar");
+  bp.disabled = !limpiando;
+  bp.classList.toggle("es-principal", limpiando);
+  bp.title = limpiando ? "" : "No hay ninguna limpieza en marcha";
+  $("#ayuda-brazo").textContent = motivo;
+
+  // Configuración: solo en reposo (nunca a mitad de un movimiento)
+  document.querySelectorAll("[data-cerebro]").forEach((b) => {
+    b.disabled = !listo;
+    b.title = listo ? "" : "Se puede cambiar con el brazo en reposo";
+  });
+}
+
 function pintarIndicadores(ind) {
   const poner = (clave, texto) => { const el = document.getElementById(`kpi-${clave}`); if (el) el.textContent = texto; };
   poner("agujeros", ind.agujeros ?? 0);
@@ -168,6 +218,7 @@ function pintarIndicadores(ind) {
 }
 
 function pintarTecnologias(e) {
+  if (!$("#lista-tecnologias")) return;   // tarjeta quitada de la página
   const tec = e.tecnologias || {};
   const claves = Object.keys(tec).map((k) => [sinTildes(k), k]);
   const orden = [...ORDEN_TEC.filter((k) => claves.some(([n]) => n === k)),
@@ -213,9 +264,9 @@ function escapar(s) {
 
 function conexion(ok) {
   const chip = $("#chip-conexion");
-  chip.classList.toggle("conectado", ok);
+  chip.hidden = ok;                       // solo se ve si se pierde la conexión
   chip.classList.toggle("desconectado", !ok);
-  $("#texto-conexion").textContent = ok ? "Conectado" : "Sin conexión con Garbi";
+  $("#texto-conexion").textContent = "Sin conexión con Garbi";
 }
 
 async function sondear() {
@@ -239,6 +290,23 @@ function arrancarVideo(img) {
   cargar();
 }
 
+// ------------------------------------------------------------------------------------------------- confirmaciones
+// Encender y Apagar mueven el brazo: siempre con confirmación. Al encender, comprobación manual (de momento) de que el
+// camino está libre y el brazo en una posición normal.
+function confirmarEnergia(comando, boton) {
+  const modal = $(comando === "encender" ? "#modal-encender" : "#modal-apagar");
+  if (comando === "encender") {
+    const checks = [$("#check-camino"), $("#check-postura")];
+    checks.forEach((c) => { c.checked = false; });
+    const ok = $("#confirmar-encender");
+    ok.disabled = true;
+    checks.forEach((c) => { c.onchange = () => { ok.disabled = !checks.every((x) => x.checked); }; });
+  }
+  modal.returnValue = "";
+  modal.onclose = () => { if (modal.returnValue === "confirmar") mandar(comando, boton); };
+  modal.showModal();
+}
+
 // ------------------------------------------------------------------------------------------------- comandos
 async function mandar(comando, boton) {
   try {
@@ -260,7 +328,11 @@ function emergencia(origen) {
 
 document.addEventListener("click", (ev) => {
   const b = ev.target.closest("[data-comando]");
-  if (b) mandar(b.dataset.comando, b);
+  if (b && b.id === "boton-energia") confirmarEnergia(b.dataset.comando, b);
+  else if (b) mandar(b.dataset.comando, b);
+  const c = ev.target.closest("[data-cerebro]");
+  if (c) fetch("/api/cerebro", {method: "POST", headers: {"Content-Type": "application/json"},
+                                body: JSON.stringify({cerebro: c.dataset.cerebro})}).catch(() => {});
 });
 $("#boton-emergencia").addEventListener("click", () => emergencia("botón"));
 
@@ -366,11 +438,8 @@ document.querySelector(".selector-modo").addEventListener("click", (ev) => {
 });
 
 // ------------------------------------------------------------------------------------------------- arranque
-(function modoInicial() {
-  let guardado = null;
-  const pedido = new URLSearchParams(location.search).get("modo");   // ?modo=fabrica
-  try { guardado = localStorage.getItem("garbi.modo"); } catch (_) { /* sin almacenamiento */ }
-  aplicarModo(pedido || guardado || "taller");
-})();
+// El modo «Fábrica» se ha quitado: siempre «Taller» (y se olvida un modo guardado de antes)
+try { localStorage.removeItem("garbi.modo"); } catch (_) { /* sin almacenamiento */ }
+aplicarModo("taller");
 document.querySelectorAll("img[data-camara]").forEach(arrancarVideo);
 sondear();

@@ -10,6 +10,7 @@ Rutas:
     GET  /api/estado          EstadoApp en JSON + tecnologías de la app (LLM, seta)
     POST /api/comando         {"comando": "encender" | "apagar" | ... }      → 400 si no existe
     POST /api/emergencia      seta / botón rojo: Comando.EMERGENCIA al instante
+    POST /api/cerebro         {"cerebro": "act" | "zonas"}: con qué se hace la aproximación (lo decide el supervisor)
     POST /api/chat            {"texto": "..."} → {"respuesta", "comandos", "fuente"}
     POST /api/foco_chat       {"foco": true|false}: mientras se escribe, la seta global no dispara
     GET  /video/{camara}      MJPEG de "top" o "wrist" con las detecciones
@@ -134,6 +135,7 @@ def crear_app(orquestador: Orquestador, asistente: AsistenteGarbi | None = None,
     app.router.add_get("/api/estado", _estado)
     app.router.add_post("/api/comando", _comando)
     app.router.add_post("/api/emergencia", _emergencia)
+    app.router.add_post("/api/cerebro", _cerebro)
     app.router.add_post("/api/chat", _chat)
     app.router.add_post("/api/foco_chat", _foco_chat)
     app.router.add_get("/video/{camara}", _video)
@@ -172,8 +174,13 @@ async def _parar_muestreo(app: web.Application) -> None:
 
 # --- manejadores ------------------------------------------------------------------------------------------------------
 
-async def _indice(request: web.Request) -> web.FileResponse:
-    return web.FileResponse(ESTATICOS / "index.html", headers={"Cache-Control": "no-store"})
+async def _indice(request: web.Request) -> web.Response:
+    """index.html con app.js / app.css versionados por fecha: el navegador no se queda con una copia vieja."""
+    html = (ESTATICOS / "index.html").read_text(encoding="utf-8")
+    for nombre in ("app.js", "app.css"):
+        v = int((ESTATICOS / nombre).stat().st_mtime)
+        html = html.replace(f"/static/{nombre}\"", f"/static/{nombre}?v={v}\"")
+    return web.Response(text=html, content_type="text/html", headers={"Cache-Control": "no-store"})
 
 
 def estado_json(ctx: Contexto) -> dict:
@@ -220,6 +227,19 @@ async def _comando(request: web.Request) -> web.Response:
     else:
         ctx.comando(comando, "botón")
     return web.json_response({"ok": True, "comando": comando.value})
+
+
+async def _cerebro(request: web.Request) -> web.Response:
+    ctx = request.app[CLAVE]
+    nombre = str((await _leer_json(request)).get("cerebro", "")).lower()
+    if nombre not in ("act", "zonas"):
+        return web.json_response({"ok": False, "error": "cerebro debe ser act o zonas"}, status=400)
+    elegir = getattr(ctx.orquestador, "elegir_cerebro", None)
+    if elegir is None:
+        return web.json_response({"ok": False, "error": "este modo no permite elegir cerebro"}, status=400)
+    ok = elegir(nombre)
+    ctx.registro.anotar("cerebro", nombre, "botón")
+    return web.json_response({"ok": bool(ok), "cerebro": nombre})
 
 
 async def _emergencia(request: web.Request) -> web.Response:

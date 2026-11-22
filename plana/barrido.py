@@ -221,7 +221,7 @@ def _planificar_rejilla(obs_actual, puntos_px, config, mapeo: MapeoRejilla, punt
     vel = config["trayectorias"]["velocidad_trayectoria"]
     ida = Trayectoria(p_ida, max(3.0, trayectoria.calcular_duracion_optima(p_ida, vel)), interpolacion="pchip")
     tw = ida.tiempos_waypoints
-    ida.fases = [("Reposo → Intermedia", 0.0), ("Encima de la tabla", float(tw[1])), ("Bajando", float(tw[2]))]
+    ida.fases = [("Reposo -> Intermedia", 0.0), ("Encima de la tabla", float(tw[1])), ("Bajando", float(tw[2]))]
     dur = duracion or max(cb["duracion_min_s"],
                           trayectoria.calcular_duracion_optima(q_barrido, velocidad or cb["velocidad_barrido"]))
     barr = Trayectoria(q_barrido, dur, interpolacion="pchip")
@@ -306,7 +306,7 @@ def planificar_barrido(obs_actual: Dict, puntos_px: np.ndarray, config: Dict, ma
     p_ida = [actual, intermedia] + q_bajada
     ida = Trayectoria(p_ida, max(3.0, trayectoria.calcular_duracion_optima(p_ida, vel)), interpolacion="pchip")
     tw = ida.tiempos_waypoints
-    ida.fases = [("Reposo → Intermedia", 0.0), ("Encima de la tabla", float(tw[1])), ("Bajando", float(tw[2]))]
+    ida.fases = [("Reposo -> Intermedia", 0.0), ("Encima de la tabla", float(tw[1])), ("Bajando", float(tw[2]))]
 
     dur = max(cb["duracion_min_s"], trayectoria.calcular_duracion_optima(q_barrido, cb["velocidad_barrido"]))
     barr = Trayectoria(q_barrido, dur, interpolacion="pchip")

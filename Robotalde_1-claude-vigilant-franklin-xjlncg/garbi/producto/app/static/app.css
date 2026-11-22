@@ -130,7 +130,11 @@ body.en-emergencia .aviso-aspiradora { display: none; }
 .camara figcaption span { color: var(--texto-suave); text-align: right; }
 
 /* --- botones --- */
-.controles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 12px; }
+.controles { display: grid; grid-template-columns: minmax(180px, 1fr) 3fr; gap: 14px 18px; padding: 14px 16px; }
+.selector-cerebro { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; }
+.selector-cerebro .selector-titulo { font-weight: 600; color: #475569; margin-right: auto; }
+.selector-cerebro .boton { min-width: 96px; }
+.selector-cerebro .boton.activo { background: #0f172a; color: #fff; border-color: #0f172a; }
 .boton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 14px;
          border-radius: 11px; border: 1px solid var(--borde); background: #fff; color: var(--texto);
          font: 600 15px/1 inherit; cursor: pointer; transition: background .15s, transform .05s, border-color .15s; }
@@ -212,7 +216,7 @@ body.en-emergencia .boton-rearmar-lateral { background: var(--rojo); color: #fff
 .chat-nota.visible { visibility: visible; }
 
 /* --- eventos --- */
-.lista-eventos { list-style: none; margin: 0; padding: 0; max-height: 132px; overflow-y: auto; font-size: 13px;
+.lista-eventos { list-style: none; margin: 0; padding: 0; max-height: 360px; overflow-y: auto; font-size: 13px;
                  display: grid; gap: 2px; }
 .lista-eventos li { display: flex; gap: 10px; padding: 4px 2px; border-bottom: 1px dashed var(--borde); }
 .lista-eventos li:last-child { border-bottom: none; }
@@ -256,7 +260,6 @@ body.modo-fabrica .selector-modo button[aria-checked="true"] { background: #3341
 body.modo-fabrica .chip { background: #1e293b; border-color: #334155; color: #cbd5e1; }
 body.modo-fabrica .chip-demo { background: #422006; border-color: #854d0e; color: #fde68a; }
 body.modo-fabrica .chat .chip { background: #f1f5f9; border-color: var(--borde); color: var(--texto-suave); }
-body.modo-fabrica .indicadores { order: -1; }
 body.modo-fabrica .estado-titulo { text-transform: uppercase; font-size: 26px; letter-spacing: .01em; }
 body.modo-fabrica .kpi-valor { font-family: "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace; font-size: 21px; }
 body.modo-fabrica .mensaje-garbi { color: #0c4a6e; }
@@ -268,7 +271,7 @@ body.modo-fabrica .mensaje-garbi { color: #0c4a6e; }
   .columna-principal, .columna-lateral { min-height: 0; overflow-y: auto; }
   .columna-principal > *, .columna-lateral > * { flex-shrink: 0; }
   .columna-principal > .eventos, .columna-lateral > .chat { flex-shrink: 1; }
-  .eventos { flex: 1; min-height: 110px; display: flex; flex-direction: column; }
+  .eventos { flex: 1; min-height: 280px; display: flex; flex-direction: column; }
   .lista-eventos { flex: 1; max-height: none; min-height: 0; }
   .chat { min-height: 260px; }
   .chat-mensajes { max-height: none; min-height: 0; }
@@ -278,7 +281,7 @@ body.modo-fabrica .mensaje-garbi { color: #0c4a6e; }
 @media (max-width: 1100px) {
   .rejilla { grid-template-columns: 1fr; }
   .estado { flex-wrap: wrap; }
-  .controles { grid-template-columns: repeat(3, 1fr); }
+  .controles { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .camaras { grid-template-columns: 1fr; }
@@ -287,3 +290,62 @@ body.modo-fabrica .mensaje-garbi { color: #0c4a6e; }
   .rejilla { padding: 12px; }
   .estado-titulo { font-size: 24px; }
 }
+
+/* --- Controles: jerarquía según el estado y color con significado (rojo = solo emergencia) --- */
+.grupo { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.grupo-titulo { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+                color: var(--texto-suave); display: flex; align-items: center; gap: 8px; }
+.aviso-mueve { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px;
+               background: #fef3c7; color: #92400e; font-size: 11px; letter-spacing: 0; text-transform: none; }
+.aviso-mueve svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.4; }
+.grupo-botones { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.grupo .boton { min-height: 52px; }
+.grupo-ayuda { margin: 0; min-height: 1.2em; font-size: 12.5px; color: var(--texto-suave); }
+.grupo-brazo { border-left: 1px solid var(--borde); padding-left: 18px; }
+
+/* Acción principal del momento: rellena con el color de la marca */
+.boton.es-principal { background: var(--marca); border-color: var(--marca); color: #fff; }
+.boton.es-principal:hover { background: var(--marca-oscura); border-color: var(--marca-oscura); }
+/* Parar cuando hay algo que parar: ámbar (detener), no rojo (eso es la emergencia) */
+.boton.boton-parar.es-principal { background: #d97706; border-color: #d97706; color: #fff; }
+.boton.boton-parar.es-principal:hover { background: #b45309; border-color: #b45309; }
+/* Apagar: secundario y neutro, pero claro */
+.boton.es-apagar { border-color: #475569; color: #334155; }
+.controles .boton:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.controles .boton.esperando:disabled { opacity: .75; cursor: progress; }
+.selector-cerebro { grid-column: 1 / -1; padding-top: 12px; border-top: 1px solid var(--borde); }
+
+@media (max-width: 1100px) {
+  .controles { grid-template-columns: 1fr; }
+  .grupo-brazo { border-left: 0; padding-left: 0; border-top: 1px solid var(--borde); padding-top: 12px; }
+}
+@media (max-width: 640px) {
+  .grupo-botones { grid-template-columns: 1fr; }
+}
+
+/* --- Ventanas de confirmación (Encender / Apagar) --- */
+.modal { border: 0; border-radius: var(--radio); padding: 0; width: min(460px, calc(100vw - 32px));
+         box-shadow: 0 20px 50px rgba(15, 23, 42, .3); color: var(--texto); }
+.modal::backdrop { background: rgba(15, 23, 42, .45); }
+.modal form { display: flex; flex-direction: column; gap: 14px; padding: 22px 22px 18px; }
+.modal h2 { margin: 0; font-size: 20px; }
+.modal-texto { margin: 0; color: var(--texto-suave); line-height: 1.45; }
+.modal-check { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid var(--borde);
+               border-radius: 10px; cursor: pointer; line-height: 1.4; }
+.modal-check:has(input:checked) { border-color: var(--marca); background: var(--marca-suave); }
+.modal-check input { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--marca); flex: none; }
+.modal-botones { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
+.modal-botones .boton { min-width: 120px; min-height: 44px; }
+.modal-botones .boton:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Indicadores de la sesión en la columna lateral (en el hueco de «Tecnologías funcionando») */
+.columna-lateral .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.columna-lateral .kpi { padding: 8px 10px; }
+.columna-lateral .kpi-valor { font-size: 20px; }
+.columna-lateral .indicadores .tarjeta-cabecera { gap: 8px; }
+.columna-lateral .indicadores .tarjeta-cabecera h2 { font-size: 13px; }
+
+/* Seta: la pista del teclado va debajo del botón */
+.seta { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: none; }
+.seta-pista { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--texto-suave);
+              display: inline-flex; align-items: center; gap: 5px; }

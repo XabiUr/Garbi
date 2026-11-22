@@ -12,7 +12,8 @@
 - Estado: el supervisor escribe estado_supervisor.json varias veces por segundo; la app lo traduce a sus estados
   (REPOSO, ACERCAMIENTO, EN_BROCA, LIMPIEZA_TABLA, LIMPIEZA_TAPETE, EMERGENCIA).
 
-Las cámaras las tiene abiertas el supervisor (con su propia ventana de OpenCV), así que la app no enseña vídeo.
+Imágenes: el supervisor (el único que abre las cámaras) arranca con --sin-ventana y publica camara_front.jpg (anotada)
+y camara_gripper.jpg; la app las enseña en sus paneles "top" y "wrist".
 """
 from __future__ import annotations
 
@@ -36,7 +37,13 @@ log = logging.getLogger(__name__)
 # Garbi/Robotalde_.../garbi/producto/app/supervisor_externo.py → Garbi/plana
 CARPETA_POR_DEFECTO = Path(__file__).resolve().parents[4] / "plana"
 ARGS_POR_DEFECTO = "--real --cerebro zonas"
-PUERTO_COMANDOS = 8765
+PUERTO_COMANDOS = 8765   # solo por defecto; al encender se elige uno libre y se le pasa al supervisor
+
+
+def _puerto_udp_libre() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
 
 # estado del supervisor → estado de la app
 ESTADOS = {"REPOSO": Estado.REPOSO, "APROXIMANDO": Estado.ACERCAMIENTO, "EN_OBJETIVO": Estado.EN_BROCA,
@@ -53,9 +60,12 @@ class OrquestadorSupervisor:
     politica = "supervisor"
 
     def __init__(self, carpeta: str | Path = CARPETA_POR_DEFECTO, args: str | list[str] = ARGS_POR_DEFECTO,
-                 python: str = sys.executable, script: str = "supervisor.py", espera_apagado: float = 15.0):
+                 python: str = sys.executable, script: str = "supervisor.py", espera_apagado: float = 15.0,
+                 ventana: bool = False):
         self.carpeta = Path(carpeta).resolve()
         self.args = shlex.split(args) if isinstance(args, str) else list(args)
+        if not ventana and "--sin-ventana" not in self.args:
+            self.args.append("--sin-ventana")   # sin ventana de OpenCV: la imagen se ve en la web
         self.python, self.script, self.espera_apagado = python, script, espera_apagado
         self._cerrojo = threading.RLock()
         self._proceso: subprocess.Popen | None = None
@@ -64,6 +74,9 @@ class OrquestadorSupervisor:
         self._eventos: deque[str] = deque(maxlen=60)
         self._udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._ultimo_aviso = ""
+        self._puerto = PUERTO_COMANDOS
+        self._cerebro = None                # el que usa el supervisor ahora ("act" | "zonas")
+        self._cerebros: list[str] = []      # los que tiene cargados
         self._anotar("App lista: pulsa Encender para arrancar el supervisor")
 
     # --- interfaz del puente ------------------------------------------------------------------------------------------
@@ -106,10 +119,12 @@ class OrquestadorSupervisor:
             else:
                 estado, detalle = self._estado_supervisor()
             return EstadoApp(
-                estado=estado, detalle=detalle, aspiradora=False, politica=self.politica,
+                estado=estado, detalle=detalle, aspiradora=False, politica=(self._cerebro if vivo and self._cerebro else "—"),
                 tecnologias={
                     "robot": f"ok: supervisor ({' '.join(self.args)})" if vivo else "aviso: supervisor cerrado",
-                    "vision": "ok: en la ventana del supervisor" if vivo else "aviso: apagada",
+                    "politica": (f"ok: {self._cerebro} · cargados: {', '.join(self._cerebros)}"
+                                 if vivo and self._cerebro else "aviso: supervisor cerrado"),
+                    "vision": "ok: imagen del supervisor" if vivo else "aviso: apagada",
                     "aspiradora": "manual",
                 },
                 eventos=list(self._eventos))
@@ -121,7 +136,7 @@ class OrquestadorSupervisor:
         except (FileNotFoundError, json.JSONDecodeError):
             d = None
         if not d or d.get("pid") != self._proceso.pid or time.time() - d.get("t", 0) > 3.0:
-            return Estado.REPOSO, "Arrancando el supervisor..."
+            return Estado.ARRANCANDO, "Arrancando: conectando el robot y yendo a reposo"
         e = d["estado"]
         aviso = d.get("aviso") or ""
         if aviso and aviso != self._ultimo_aviso:
@@ -134,12 +149,33 @@ class OrquestadorSupervisor:
         else:
             estado, detalle = ESTADOS.get(e, Estado.REPOSO), DETALLES.get(e, e)
         self._parada = e == "PARADA"
+        self._cerebro = d.get("cerebro", self._cerebro)
+        self._cerebros = d.get("cerebros", self._cerebros)
         if not d.get("barrido_listo", True):
             detalle += " · barrido sin calibrar"
         return estado, detalle
 
+    def elegir_cerebro(self, nombre: str) -> bool:
+        """Pide al supervisor que haga la aproximación con `nombre` ("act" o "zonas"). Decide el supervisor."""
+        with self._cerrojo:
+            if self._orden(f"cerebro:{nombre}"):
+                self._anotar(f"Pedido: aproximación con {nombre.upper()}")
+                return True
+            return False
+
     def imagenes_anotadas(self) -> dict:
-        return {}   # las cámaras las usa el supervisor
+        """Los JPEG que publica el supervisor (si son recientes)."""
+        if not self._vivo():
+            return {}
+        salida = {}
+        for camara, nombre in (("top", "camara_front.jpg"), ("wrist", "camara_gripper.jpg")):
+            ruta = self.carpeta / nombre
+            try:
+                if time.time() - ruta.stat().st_mtime < 2.0:
+                    salida[camara] = ruta.read_bytes()
+            except OSError:
+                pass
+        return salida
 
     def cerrar(self) -> None:
         """Al salir de la app: apaga el supervisor si sigue vivo y espera a que cierre."""
@@ -171,7 +207,10 @@ class OrquestadorSupervisor:
         if not (self.carpeta / self.script).exists():
             self._anotar(f"No encuentro {self.carpeta / self.script}")
             return
-        orden = [self.python, "-u", self.script, *self.args]
+        # puerto de órdenes propio: esta web solo habla con SU supervisor aunque haya otro en marcha
+        self._puerto = _puerto_udp_libre()
+        orden = [self.python, "-u", self.script, *self.args, "--puerto-comandos", str(self._puerto),
+                 "--pid-padre", str(os.getpid())]   # si esta web desaparece, el supervisor se apaga solo
         log.info("Lanzando supervisor: %s (en %s)", " ".join(orden), self.carpeta)
         # start_new_session: un Ctrl+C en la terminal de la app no le llega directamente; lo cerramos nosotros.
         self._proceso = subprocess.Popen(orden, cwd=self.carpeta, stdin=subprocess.DEVNULL, start_new_session=True)
@@ -210,7 +249,7 @@ class OrquestadorSupervisor:
             self._anotar("El supervisor no está en marcha: pulsa Encender")
             return False
         try:
-            self._udp.sendto(texto.encode(), ("127.0.0.1", PUERTO_COMANDOS))
+            self._udp.sendto(texto.encode(), ("127.0.0.1", self._puerto))
             return True
         except OSError as e:
             self._anotar(f"No puedo mandar «{texto}» al supervisor ({e})")

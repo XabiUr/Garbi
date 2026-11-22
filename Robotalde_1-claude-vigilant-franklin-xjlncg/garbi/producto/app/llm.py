@@ -34,6 +34,7 @@ COMANDOS_CHAT = [Comando.ENCENDER, Comando.APAGAR, Comando.LIMPIAR_TABLA, Comand
 
 ETIQUETAS_ESTADO = {
     Estado.APAGADO: "apagado",
+    Estado.ARRANCANDO: "arrancando: conectando el robot y yendo a reposo",
     Estado.REPOSO: "en reposo, esperando a que acerques el taladro",
     Estado.ACERCAMIENTO: "acercándome a la broca",
     Estado.EN_BROCA: "junto a la broca, aspirando",
