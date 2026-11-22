@@ -142,7 +142,11 @@ class OrquestadorSupervisor:
         if aviso and aviso != self._ultimo_aviso:
             self._ultimo_aviso = aviso
             self._eventos.appendleft(aviso)
-        if d.get("barrido") and e in ("BARRIDO_IDA", "BARRIENDO", "VOLVIENDO"):
+        if e == "ESPERA_OBSTACULO":   # quieto por una mano o el taladro; se puede Parar
+            que = "el tapete" if d.get("barrido") == "tapete" else "la tabla"
+            estado = Estado.LIMPIEZA_TAPETE if d.get("barrido") == "tapete" else Estado.LIMPIEZA_TABLA
+            detalle = f"QUIETO: algo en la zona mientras limpiaba {que}. Vuelvo a reposo cuando se despeje"
+        elif d.get("barrido") and e in ("BARRIDO_IDA", "BARRIENDO", "VOLVIENDO"):
             estado = Estado.LIMPIEZA_TAPETE if d["barrido"] == "tapete" else Estado.LIMPIEZA_TABLA
             que = "el tapete" if d["barrido"] == "tapete" else "la tabla"
             detalle = f"Vuelvo a reposo tras barrer {que}" if e == "VOLVIENDO" else f"{DETALLES.get(e, e)} {que}"

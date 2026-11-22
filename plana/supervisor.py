@@ -13,6 +13,7 @@ Máquina de estados:
 - VOLVIENDO: Volver a reposo suavemente
 - PARADA: Parada de emergencia (ESPACIO), continuar con C
 - BARRIDO_IDA / BARRIENDO: barre la tabla de madera en zigzag (tecla B; barrido.py) y vuelve con VOLVIENDO
+- ESPERA_OBSTACULO: mano o taladro durante un barrido → quieto; con la zona libre 1,5 s, vuelve a reposo
 
 Modos:
 - Sin --seguir (default): Objetivo fijo, pasa a estado FIJO cuando se estabiliza
@@ -96,6 +97,7 @@ class Estado(Enum):
     VOLVIENDO = "VOLVIENDO"  # Reproduce trayectoria de vuelta (levanta + vuelve a reposo)
     BARRIDO_IDA = "BARRIDO_IDA"  # Va desde reposo al primer punto del barrido de la tabla
     BARRIENDO = "BARRIENDO"  # Recorre la tabla en zigzag (barrido.py)
+    ESPERA_OBSTACULO = "ESPERA_OBSTACULO"  # Mano o taladro durante un barrido: quieto hasta que se vaya, luego a reposo
     PARADA = "PARADA"
 
 
@@ -400,9 +402,9 @@ class Supervisor:
         elif self.estado == Estado.BARRIDO_IDA:
             self.tiempo_trayectoria += self.dt
             if self.taladro_visible(percepcion):
-                self.abortar_barrido("ha aparecido el taladro")
+                self.pausar_por_obstaculo("ha aparecido el taladro")
             elif self.manos["hay_manos"]:
-                self.abortar_barrido("hay una mano en la zona")
+                self.pausar_por_obstaculo("hay una mano en la zona")
             elif self.tiempo_trayectoria >= self.trayectoria_actual.duracion:
                 self.trayectoria_actual = self.traj_barrido
                 self.tiempo_trayectoria = 0.0
@@ -411,9 +413,9 @@ class Supervisor:
         elif self.estado == Estado.BARRIENDO:
             self.tiempo_trayectoria += self.dt
             if self.taladro_visible(percepcion):
-                self.abortar_barrido("ha aparecido el taladro")
+                self.pausar_por_obstaculo("ha aparecido el taladro")
             elif self.manos["hay_manos"]:
-                self.abortar_barrido("hay una mano en la zona")
+                self.pausar_por_obstaculo("hay una mano en la zona")
             elif self.tiempo_trayectoria >= self.trayectoria_actual.duracion:
                 print("[Supervisor] Barrido completado")
                 self.tabla_barrida = self.madera["esquinas_px"] if self.madera and self.madera["hay_madera"] else None
@@ -539,6 +541,13 @@ class Supervisor:
                 self.tiempo_trayectoria = 0.0
                 self.transicion_estado(Estado.VOLVIENDO)
 
+        elif self.estado == Estado.ESPERA_OBSTACULO:
+            obstaculo = self.taladro_visible(percepcion) or self.manos["hay_manos"]
+            self.tiempo_libre = 0.0 if obstaculo else self.tiempo_libre + self.dt
+            if self.tiempo_libre >= self.config.get("barrido", {}).get("t_zona_libre_s", 1.5):
+                self.avisar("Zona libre: vuelvo a reposo")
+                self.abortar_barrido(None)
+
         elif self.estado == Estado.VOLVIENDO:
             # Reproducir trayectoria de vuelta (continua: levanta + vuelve a reposo)
             self.tiempo_trayectoria += self.dt
@@ -568,6 +577,9 @@ class Supervisor:
 
         elif self.estado == Estado.BARRIDO_IDA:
             return self.trayectoria_actual.muestrear(self.tiempo_trayectoria)
+
+        elif self.estado == Estado.ESPERA_OBSTACULO:
+            return self.postura_espera.copy()   # quieto donde se paró
 
         elif self.estado == Estado.BARRIENDO:
             # Sin ease: velocidad constante a lo largo del zigzag
@@ -815,6 +827,14 @@ class Supervisor:
               f"({len(recorrido)} puntos)")
         self.transicion_estado(Estado.BARRIDO_IDA)
 
+    def pausar_por_obstaculo(self, motivo: str):
+        """Mano o taladro durante un barrido: quieto en la postura actual hasta que la zona quede libre."""
+        con_ease = self.estado == Estado.BARRIDO_IDA
+        self.postura_espera = self.trayectoria_actual.muestrear(self.tiempo_trayectoria, aplicar_ease=con_ease)
+        self.tiempo_libre = 0.0
+        self.avisar(f"Quieto: {motivo}. Vuelvo a reposo cuando se despeje")
+        self.transicion_estado(Estado.ESPERA_OBSTACULO)
+
     def abortar_barrido(self, motivo):
         """Termina el barrido (motivo=None si ha acabado bien) y vuelve a reposo con la vuelta de siempre."""
         if motivo:
@@ -974,7 +994,7 @@ class Supervisor:
                     if orden.startswith("cerebro:"):
                         self.poner_cerebro(orden.split(":", 1)[1])
                     elif orden == "parar":
-                        if self.estado in (Estado.BARRIDO_IDA, Estado.BARRIENDO):
+                        if self.estado in (Estado.BARRIDO_IDA, Estado.BARRIENDO, Estado.ESPERA_OBSTACULO):
                             self.abortar_barrido("parado desde la web")
                     else:
                         tecla = {"tabla": ord('b'), "tapete": ord('t'), "parada": ord(' '), "continuar": ord('c'),
