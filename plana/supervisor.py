@@ -246,7 +246,8 @@ class Supervisor:
         """Inicia el archivo de log CSV"""
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         cerebro_nombre = self.cerebros_nombres[self.cerebro_actual_idx]
-        filename = f"log_supervisor_{cerebro_nombre}_{timestamp}.csv"
+        os.makedirs("Logs", exist_ok=True)
+        filename = os.path.join("Logs", f"log_supervisor_{cerebro_nombre}_{timestamp}.csv")
 
         self.log_file = open(filename, 'w', newline='')
         self.log_writer = csv.writer(self.log_file)

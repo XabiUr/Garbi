@@ -8,5 +8,5 @@ __pycache__/
 .DS_Store
 
 # Logs por ciclo del supervisor (pesan y cambian en cada prueba; están en la copia de seguridad)
-plana/log_supervisor_*.csv
+plana/Logs/
 plana/estado_supervisor.json*
