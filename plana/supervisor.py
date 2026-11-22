@@ -209,6 +209,14 @@ class Supervisor:
         self.umbral_estabilizacion = config["supervisor"].get("umbral_estabilizacion", 0.5)  # Unidades normalizadas del motor [-100, 100]
         self.tiempo_estabilizacion_s = config["supervisor"].get("tiempo_estabilizacion_s", 1.0)
         self.tiempo_max_actuando_s = config["supervisor"].get("tiempo_max_actuando_s", 7.0)  # Timeout máximo en ACTUANDO
+        # ACT: llegada a la broca → FIJO (deja de consultar la política; si no, corrige cada vibración del taladro)
+        self.act_umbral_llegada = config["supervisor"].get("act_umbral_llegada", 1.5)   # variación máx. en la ventana
+        self.act_t_min = config["supervisor"].get("act_t_min_s", 2.0)                 # no congelar antes de esto
+        self.act_desplazamiento_min = config["supervisor"].get("act_desplazamiento_min", 8.0)  # debe haberse movido
+        from collections import deque
+        self.historial_act = deque()
+        self.ultima_accion_act = None
+        self.act_inicio = None
         self.umbral_movimiento_taladro = config["supervisor"].get("umbral_movimiento_taladro", 0.05)
 
         # Limpieza local
@@ -373,8 +381,12 @@ class Supervisor:
                     self.tiempo_trayectoria = 0.0
                     self.transicion_estado(Estado.APROXIMANDO)
                 else:
-                    # Para ACT, mantener comportamiento antiguo: reset al empezar
+                    # ACT: reset al empezar; se congelará en FIJO al llegar (ver APROXIMANDO)
                     self.cerebro.reset()
+                    self.historial_act.clear()
+                    self.ultima_accion_act = None
+                    self.act_inicio = None
+                    self.tiempo_trayectoria = 0.0
                     self.transicion_estado(Estado.APROXIMANDO)
                 self.tabla_barrida = None  # se va a taladrar: habrá serrín nuevo
                 self.barrido_pedido = False
@@ -445,6 +457,27 @@ class Supervisor:
                 self.tiempo_trayectoria = 0.0
                 self.transicion_estado(Estado.VOLVIENDO)
                 return
+
+            # ACT: ¿ha llegado? (órdenes estables tras moverse) o tiempo máximo → FIJO con la última orden
+            if cerebro_nombre != "zonas" and self.ultima_accion_act is not None:
+                t = self.tiempo_trayectoria
+                v = np.array([self.ultima_accion_act.get(f"{m}.pos", 0.0) for m in self.MOTOR_NAMES[:5]])
+                if self.act_inicio is None:
+                    self.act_inicio = v
+                self.historial_act.append((t, v))
+                while self.historial_act and t - self.historial_act[0][0] > self.tiempo_estabilizacion_s:
+                    self.historial_act.popleft()
+                ventana = np.array([x[1] for x in self.historial_act])
+                variacion = float(np.ptp(ventana, axis=0).max()) if len(ventana) > 1 else float("inf")
+                ventana_llena = t - self.historial_act[0][0] >= 0.9 * self.tiempo_estabilizacion_s
+                movido = float(np.abs(v - self.act_inicio).max()) >= self.act_desplazamiento_min
+                llegado = t >= self.act_t_min and movido and ventana_llena and variacion <= self.act_umbral_llegada
+                if llegado or t >= self.tiempo_max_actuando_s:
+                    self.postura_fija = dict(self.ultima_accion_act)
+                    self.avisar("ACT en la broca: me quedo fijo" if llegado
+                                else f"ACT: {self.tiempo_max_actuando_s:.0f} s sin estabilizarse, me quedo fijo")
+                    self.transicion_estado(Estado.FIJO)
+                    return
 
             # Verificar fin de trayectoria (solo para zonas)
             if cerebro_nombre == "zonas" and self.trayectoria_actual:
@@ -573,7 +606,8 @@ class Supervisor:
             else:
                 # ACT: la política ya genera la trayectoria completa (aprendida de
                 # los episodios grabados). Sin offsets: se envía tal cual.
-                return self.cerebro.paso(obs, percepcion)
+                self.ultima_accion_act = self.cerebro.paso(obs, percepcion)
+                return self.ultima_accion_act
 
         elif self.estado == Estado.BARRIDO_IDA:
             return self.trayectoria_actual.muestrear(self.tiempo_trayectoria)
